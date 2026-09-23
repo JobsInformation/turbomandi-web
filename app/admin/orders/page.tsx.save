@@ -1,0 +1,159 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Trash2, Package, MapPin, DollarSign, Box, CheckCircle, ShieldAlert, ArrowLeft } from 'lucide-react';
+
+export default function AdminOrdersPage() {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    
+    const loadOrders = () => {
+      const saved = localStorage.getItem('turbomandi_admin_orders');
+      if (saved && saved !== '[]') {
+        setOrders(JSON.parse(saved));
+      } else {
+       const defaultOrders = [
+          {
+           id: 'ORD-8832',
+           customer: 'Ahmed Khan',
+           items: '2x NGK Iridium Spark Plugs, 1x Liqui Moly 5W-40',
+           total: 18500,
+           address: 'DHA Phase 6, Karachi',
+           status: 'PENDING'
+          },
+          {
+            id: 'ORD-8833',
+            customer: 'Ali Raza',
+            items: '1x K&N Air Filter',
+            total: 12000,
+            address: 'Gulberg III, Lahore',
+            status: 'SHIPPED'
+          }
+        ;
+      onClick={() => handleDelete(order.id)  setOrders(defaultOrders);
+        localStorage.setItem('turbomandi_admin_orders', JSON.stringify(defaultOrders));
+      }
+    };
+
+    // Load initially
+    loadOrders();
+
+    // Listen for changes from the checkout page (cross-tab real-time sync)
+    window.addEventListener('storage', loadOrders);
+    return () => window.removeEventListener('storage', loadOrders);
+  }, []);
+
+  const handleDelete = (id: string) => {
+    if (!confirm(`Are you sure you want to delete order ${id}?`)) return;
+    
+    const updatedOrders = orders.filter(o => o.id !== id);
+    setOrders(updatedOrders);
+    localStorage.setItem('turbomandi_admin_orders', JSON.stringify(updatedOrders));
+  };
+
+  const toggleStatus = (id: string) => {
+    const updatedOrders = orders.map(order => {
+      if (order.id === id) {
+        return { ...order, status: order.status === 'PENDING' ? 'SHIPPED' : 'PENDING' };
+      }
+      return order;
+    });
+    setOrders(updatedOrders);
+    localStorage.setItem('turbomandi_admin_orders', JSON.stringify(updatedOrders));
+  };
+
+  if (!isMounted) return null;
+
+  return (
+    <main className="min-h-screen bg-zinc-950 text-white font-sans">
+      <div className="max-w-7xl mx-auto p-6 md:p-12">
+        <Link href="/admin" className="text-zinc-500 hover:text-zinc-300 text-sm flex items-center gap-2 mb-8 transition w-fit">
+          <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+        </Link>
+
+        <div className="flex justify-between items-end mb-10 border-b border-zinc-800 pb-6">
+          <div>
+            <h1 className="text-3xl font-black uppercase tracking-tight flex items-center gap-3 mb-2">
+              <Package className="w-8 h-8 text-red-600" /> Parts Orders
+            </h1>
+            <p className="text-zinc-500 text-sm">Review, fulfill, and manage customer part deliveries</p>
+          </div>
+          <div className="bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-full text-sm font-semibold text-zinc-300">
+            Total Orders: {orders.length}
+          </div>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm whitespace-nowrap">
+              <thead className="bg-zinc-950 border-b border-zinc-800 text-zinc-400 font-bold text-xs uppercase tracking-wider">
+                <tr>
+                  <th className="px-6 py-4">Order ID</th>
+                  <th className="px-6 py-4">Customer & Address</th>
+                  <th className="px-6 py-4">Items</th>
+                  <th className="px-6 py-4">Total Value</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-800">
+                {orders.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-zinc-500">
+                      <Box className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
+                      No active orders found.
+                    </td>
+                  </tr>
+                ) : (
+                  orders.map((order) => (
+                    <tr key={order.id} className="hover:bg-zinc-800/50 transition">
+                      <td className="px-6 py-4 font-bold text-white">{order.id}</td>
+                      <td className="px-6 py-4">
+                        <div className="font-bold text-zinc-200 mb-1">{order.customer}</div>
+                        <div className="text-zinc-500 flex items-center gap-1 text-xs">
+                          <MapPin className="w-3 h-3" /> {order.address}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-zinc-400 max-w-xs truncate" title={order.items}>
+                        {order.items}
+                      </td>
+                      <td className="px-6 py-4 text-emerald-500 font-bold flex items-center gap-1 mt-2">
+                        PKR {order.total.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <button 
+                          onClick={() => toggleStatus(order.id)}
+                          className={`px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5 transition ${
+                            order.status === 'SHIPPED' 
+                            ? 'bg-emerald-950/40 text-emerald-500 border border-emerald-900/50 hover:bg-emerald-900/60' 
+                            : 'bg-orange-950/40 text-orange-500 border border-orange-900/50 hover:bg-orange-900/60'
+                          }`}
+                        >
+                          {order.status === 'SHIPPED' ? <CheckCircle className="w-3.5 h-3.5" /> : <ShieldAlert className="w-3.5 h-3.5" />}
+                          {order.status}
+                        </button>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <button 
+                          onClick={() => handleDelete(order.id)}
+                          className="p-2 bg-zinc-800 hover:bg-red-900/50 hover:text-red-500 text-zinc-400 rounded-lg transition"
+                          title="Delete Order"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

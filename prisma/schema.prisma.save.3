@@ -1,0 +1,74 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      String   @default("CUSTOMER") // ADMIN or CUSTOMER
+  createdAt DateTime @default(now())
+}
+
+model Vehicle {
+  id           Int      @id @default(autoincrement())
+  make         String
+  model        String
+  year         Int
+  price        Float
+  mileage      String
+  transmission String
+  type         String
+  tag          String
+  createdAt    DateTime @default(now())
+}
+
+model Part {
+  id        Int      @id @default(autoincrement())
+  name      String
+  sku       String?  @unique
+  price     Float
+  String
+  stock     Int      @default(10)
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id        String   @id
+  customer  String
+  phone     String
+  city      String
+  address   String
+  total     Float
+  status    String   @default("PENDING")
+  items     String   // JSON stringified items array
+  createdAt DateTime @default(now())
+
+
+model ServiceBooking {
+  id            Int      @id @default(autoincrement())
+  customerName  String
+model Order {
+  id        String   @id
+  customer  String
+  phone     String
+  city      String
+  address   String
+  total     Float
+  status    String   @default("PENDING")
+  items     String   // JSON stringified items array
+  createdAt DateTime @default(now())
+}
+  phone         String
+  vehicleInfo   String
+  serviceType   String
+  preferredDate String
+  notes         String?
+  status        String   @default("CONFIRMED")
+  createdAt     DateTime @default(now())
+}
