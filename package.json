@@ -2,12 +2,12 @@
   "name": "turbomandi-web",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-  "scripts": {
-  "build": "npx prisma db push --accept-data-loss && npx prisma generate && next build",
-  "dev": "next dev",
-  "start": "next start"
-},
+  }
+ "scripts": {
+    "build": "npx prisma db push --accept-data-loss && npx prisma generate && next build",
+    "dev": "next dev",
+    "start": "next start"
+  },
   "dependencies": {
     "@types/bcrypt": "^6.0.0",
     "bcrypt": "^6.0.0",
