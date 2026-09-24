@@ -2,7 +2,6 @@
   "name": "turbomandi-web",
   "version": "0.1.0",
   "private": true,
-  }
  "scripts": {
     "build": "npx prisma db push --accept-data-loss && npx prisma generate && next build",
     "dev": "next dev",
