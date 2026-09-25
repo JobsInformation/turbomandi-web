@@ -88,7 +88,11 @@ export default function AdminOrdersPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <Link href="/parts" className="text-sm text-zinc-400 hover:text-white mb-2 inline-block">&larr; Back to Parts Store</Link>
+            <div className="flex items-center gap-4 mb-2">
+              <Link href="/admin" className="text-sm text-zinc-400 hover:text-white inline-block">&larr; Admin Dashboard</Link>
+              <span className="text-zinc-600">|</span>
+              <Link href="/parts" className="text-sm text-zinc-400 hover:text-white inline-block">Parts Store</Link>
+            </div>
             <h1 className="text-3xl font-bold flex items-center gap-3">
               <span className="text-red-500">📦</span> PARTS ORDERS
             </h1>

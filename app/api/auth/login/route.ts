@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import * as bcrypt from 'bcrypt';
+import { adminToken } from '@/lib/adminAuth';
 
 export async function POST(req: Request) {
   try {
@@ -16,17 +17,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Database table missing or uninitialized.' }, { status: 500 });
     }
 
-    // Auto-provision default admin if not found
-    if (!user && email === 'admin@turbomandi.com') {
-      const hashedPassword = await bcrypt.hash('admin123', 10);
-      user = await prisma.user.create({
-        data: {
-          email: 'admin@turbomandi.com',
-          password: hashedPassword,
-          role: 'ADMIN'
-        }
-      });
-    }
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
@@ -39,11 +29,23 @@ export async function POST(req: Request) {
 
     const { password: _, ...userInfo } = user;
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       message: 'Login successful',
       user: userInfo
     }, { status: 200 });
+
+    if (user.role === 'ADMIN') {
+      response.cookies.set('admin_session', adminToken(), {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 8,
+      });
+    }
+
+    return response;
 
   } catch (error: any) {
     console.error('Auth Login Fatal Error:', error);

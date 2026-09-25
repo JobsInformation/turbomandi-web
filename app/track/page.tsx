@@ -2,22 +2,60 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, Package, MapPin, CheckCircle2, Clock, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Search, Package, MapPin, CheckCircle2, Clock, ArrowLeft } from 'lucide-react';
+
+interface OrderData {
+  id: string;
+  customerName?: string;
+  customer?: string;
+  phone: string;
+  address: string;
+  city?: string;
+  total: number;
+  status: string;
+  items: any;
+}
 
 export default function TrackOrderPage() {
   const [searchId, setSearchId] = useState('');
-  const [order, setOrder] = useState<any>(null);
+  const [order, setOrder] = useState<OrderData | null>(null);
+  const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchId.trim()) return;
 
-    const savedOrders = JSON.parse(localStorage.getItem('turbomandi_admin_orders') || '[]');
-    const found = savedOrders.find((o: any) => o.id.toLowerCase() === searchId.trim().toLowerCase());
-
-    setOrder(found || null);
+    setLoading(true);
     setSearched(true);
+
+    try {
+      const res = await fetch(`/api/orders?search=${encodeURIComponent(searchId.trim())}`);
+      if (res.ok) {
+        const data = await res.json();
+        setOrder(data);
+      } else {
+        setOrder(null);
+      }
+    } catch (err) {
+      console.error('Failed to search order:', err);
+      setOrder(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatItems = (items: any) => {
+    if (!items) return 'No items listed';
+    try {
+      const parsed = typeof items === 'string' ? JSON.parse(items) : items;
+      if (Array.isArray(parsed)) {
+        return parsed.map((item: any) => `${item.name || 'Part'} (x${item.quantity || 1})`).join(', ');
+      }
+      return String(items);
+    } catch {
+      return String(items);
+    }
   };
 
   return (
@@ -43,15 +81,16 @@ export default function TrackOrderPage() {
               type="text"
               value={searchId}
               onChange={(e) => setSearchId(e.target.value)}
-              placeholder="e.g. ORD-8832"
+              placeholder="e.g. paste your Order UUID"
               className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl pl-12 pr-4 py-3.5 text-sm text-white focus:outline-none focus:border-red-600 uppercase font-mono"
             />
           </div>
           <button 
             type="submit"
-            className="bg-red-600 hover:bg-red-700 text-white px-6 rounded-2xl font-bold text-sm uppercase tracking-wider transition"
+            disabled={loading}
+            className="bg-red-600 hover:bg-red-700 text-white px-6 rounded-2xl font-bold text-sm uppercase tracking-wider transition disabled:opacity-50"
           >
-            Track
+            {loading ? 'Searching...' : 'Track'}
           </button>
         </form>
 
@@ -63,7 +102,7 @@ export default function TrackOrderPage() {
                 <div className="flex justify-between items-start border-b border-zinc-800 pb-6">
                   <div>
                     <span className="text-xs font-bold text-zinc-500 uppercase">Order Reference</span>
-                    <h3 className="text-xl font-black text-white font-mono">{order.id}</h3>
+                    <h3 className="text-xl font-black text-white font-mono break-all">{order.id}</h3>
                   </div>
                   <div>
                     <span className={`px-3 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5 ${
@@ -80,24 +119,24 @@ export default function TrackOrderPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div className="bg-zinc-950 border border-zinc-800/60 p-4 rounded-2xl">
                     <span className="text-zinc-500 text-xs font-bold uppercase block mb-1">Customer Name</span>
-                    <span className="font-bold text-zinc-200">{order.customer}</span>
+                    <span className="font-bold text-zinc-200">{order.customerName || order.customer || 'Customer'}</span>
                   </div>
                   <div className="bg-zinc-950 border border-zinc-800/60 p-4 rounded-2xl">
                     <span className="text-zinc-500 text-xs font-bold uppercase block mb-1">Total Amount</span>
-                    <span className="font-bold text-emerald-500">PKR {order.total.toLocaleString()}</span>
+                    <span className="font-bold text-emerald-500">PKR {Number(order.total).toLocaleString()}</span>
                   </div>
                 </div>
 
                 <div className="bg-zinc-950 border border-zinc-800/60 p-4 rounded-2xl text-sm">
                   <span className="text-zinc-500 text-xs font-bold uppercase block mb-1">Delivery Address</span>
                   <div className="flex items-center gap-2 text-zinc-300">
-                    <MapPin className="w-4 h-4 text-red-600 shrink-0" /> {order.address}
+                    <MapPin className="w-4 h-4 text-red-600 shrink-0" /> {order.address}{order.city ? `, ${order.city}` : ''}
                   </div>
                 </div>
 
                 <div className="bg-zinc-950 border border-zinc-800/60 p-4 rounded-2xl text-sm">
                   <span className="text-zinc-500 text-xs font-bold uppercase block mb-1">Ordered Items</span>
-                  <p className="text-zinc-300 font-medium">{order.items}</p>
+                  <p className="text-zinc-300 font-medium">{formatItems(order.items)}</p>
                 </div>
               </div>
             ) : (

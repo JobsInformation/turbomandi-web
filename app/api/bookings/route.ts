@@ -1,26 +1,52 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+
+export async function GET() {
+  try {
+    const bookings = await prisma.serviceBooking.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    return NextResponse.json(bookings);
+  } catch (error) {
+    console.error('Failed to fetch bookings:', error);
+    return NextResponse.json({ error: 'Failed to fetch bookings' }, { status: 500 });
+  }
+}
 
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    
-    // In a fully complete app, you would save this to your database via Prisma here.
-    // e.g., const newBooking = await prisma.booking.create({ data });
-    
-    console.log('✅ New Workshop Booking Received:', data);
+    const { customerName, phone, vehicleInfo, serviceType, preferredDate, date, notes } = data;
 
-    // Simulate a slight database processing delay so the loading state feels natural
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    if (!customerName || !phone) {
+      return NextResponse.json(
+        { error: 'Customer name and phone number are required.' },
+        { status: 400 }
+      );
+    }
 
-    // Return a success status to the frontend
+    const newBooking = await prisma.serviceBooking.create({
+      data: {
+        customerName,
+        phone,
+        vehicleInfo: vehicleInfo || 'Vehicle',
+        serviceType: serviceType || 'General Maintenance',
+        preferredDate: preferredDate || date || 'Soonest Available',
+        notes: notes || null,
+        status: 'CONFIRMED',
+      },
+    });
+
+    console.log('✅ New Workshop Booking Saved:', newBooking.id);
+
     return NextResponse.json(
-      { success: true, message: 'Booking created successfully.' }, 
+      { success: true, message: 'Booking created successfully.', booking: newBooking }, 
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error('Booking Error:', error);
     return NextResponse.json(
-      { error: 'Failed to process booking request' }, 
+      { error: error.message || 'Failed to process booking request' }, 
       { status: 500 }
     );
   }

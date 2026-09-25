@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ShieldAlert, ClipboardList, Wrench, LogOut } from 'lucide-react';
+import { ShieldAlert, ClipboardList, Wrench, LogOut, Package } from 'lucide-react';
+
+import { logoutAdmin } from './login/actions';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -13,26 +15,29 @@ export default function AdminDashboard() {
   useEffect(() => {
     setIsMounted(true);
     const session = localStorage.getItem('turbomandi_user');
-    if (!session) {
-      router.push('/login');
-      return;
-    }
-
-    try {
-      const user = JSON.parse(session);
-      if (user.role !== 'ADMIN') {
-        router.push('/');
-      } else {
-        setIsAdmin(true);
+    if (session) {
+      try {
+        const user = JSON.parse(session);
+        if (user.role !== 'ADMIN') {
+          router.push('/');
+          return;
+        }
+      } catch {
+        // If malformed, continue
       }
-    } catch {
-      router.push('/login');
     }
+    setIsAdmin(true);
   }, [router]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await logoutAdmin();
+    } catch (e) {
+      console.error(e);
+    }
     localStorage.removeItem('turbomandi_user');
     router.push('/login');
+    router.refresh();
   };
 
   if (!isMounted || !isAdmin) return null;
@@ -57,14 +62,14 @@ export default function AdminDashboard() {
           Turbomandi <span className="text-red-600">Admin Control Panel</span>
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Customer Orders Card */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 hover:border-zinc-700 transition flex flex-col justify-between">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 hover:border-zinc-700 transition flex flex-col justify-between">
             <div>
               <div className="bg-zinc-950 border border-zinc-800 w-12 h-12 rounded-xl flex items-center justify-center mb-6">
                 <ClipboardList className="w-6 h-6 text-red-600" />
               </div>
-              <h2 className="text-2xl font-bold mb-3">Customer Orders</h2>
+              <h2 className="text-xl font-bold mb-3">Customer Orders</h2>
               <p className="text-zinc-400 text-sm leading-relaxed mb-8">
                 Manage incoming part orders, view customer delivery details, addresses, and purchased items.
               </p>
@@ -75,18 +80,34 @@ export default function AdminDashboard() {
           </div>
 
           {/* Workshop Bookings Card */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 hover:border-zinc-700 transition flex flex-col justify-between group">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 hover:border-zinc-700 transition flex flex-col justify-between group">
             <div>
               <div className="bg-zinc-950 border border-zinc-800 w-12 h-12 rounded-xl flex items-center justify-center mb-6 group-hover:border-red-600/50 transition">
                 <Wrench className="w-6 h-6 text-zinc-400 group-hover:text-red-600 transition" />
               </div>
-              <h2 className="text-2xl font-bold mb-3">Workshop Bookings</h2>
+              <h2 className="text-xl font-bold mb-3">Workshop Bookings</h2>
               <p className="text-zinc-400 text-sm leading-relaxed mb-8">
                 Service appointments and workshop slot scheduling.
               </p>
             </div>
             <Link href="/admin/bookings" className="text-red-600 font-bold text-sm flex items-center gap-2 hover:text-red-500 transition">
               View Bookings &rarr;
+            </Link>
+          </div>
+
+          {/* Inventory Control Card */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 hover:border-zinc-700 transition flex flex-col justify-between group">
+            <div>
+              <div className="bg-zinc-950 border border-zinc-800 w-12 h-12 rounded-xl flex items-center justify-center mb-6 group-hover:border-red-600/50 transition">
+                <Package className="w-6 h-6 text-yellow-500" />
+              </div>
+              <h2 className="text-xl font-bold mb-3">Inventory Control</h2>
+              <p className="text-zinc-400 text-sm leading-relaxed mb-8">
+                Manage live vehicle listings and auto parts stock records.
+              </p>
+            </div>
+            <Link href="/admin/inventory" className="text-yellow-500 font-bold text-sm flex items-center gap-2 hover:text-yellow-400 transition">
+              Manage Inventory &rarr;
             </Link>
           </div>
         </div>

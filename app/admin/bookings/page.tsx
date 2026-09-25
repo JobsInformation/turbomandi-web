@@ -4,49 +4,49 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Trash2, User, Calendar, Phone, Clock, Car, Bike, Wrench, Package, PlusCircle, MessageCircle } from 'lucide-react';
 
+interface Booking {
+  id: number;
+  customerName: string;
+  serviceType: string;
+  preferredDate?: string;
+  date?: string;
+  phone: string;
+  status: string;
+}
+
 export default function AdminBookingsPage() {
-  const [bookings, setBookings] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Load data from Local Storage when the page loads
+  const fetchBookings = async () => {
+    try {
+      const res = await fetch('/api/bookings');
+      if (res.ok) {
+        const data = await res.json();
+        setBookings(data);
+      }
+    } catch (err) {
+      console.error('Failed to load bookings:', err);
+    }
+  };
+
   useEffect(() => {
     setIsMounted(true);
-    const saved = localStorage.getItem('turbomandi_admin_bookings');
-    
-    if (saved) {
-      setBookings(JSON.parse(saved));
-    } else {
-      // If no data exists, load the default mock data and save it
-      const defaultData = [{
-        id: 1,
-        customerName: 'Muhammad Aslam',
-        serviceType: 'General Maintenance',
-        date: 'Today', 
-        phone: '03003067553',
-        status: 'CONFIRMED'
-      }];
-      setBookings(defaultData);
-      localStorage.setItem('turbomandi_admin_bookings', JSON.stringify(defaultData));
-    }
+    fetchBookings();
   }, []);
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this booking?')) return;
     
     setIsDeleting(id);
-    
     try {
-      // Still hitting our API route
       const res = await fetch(`/api/bookings/${id}`, {
         method: 'DELETE',
       });
 
       if (res.ok) {
-        // Update both the screen AND Local Storage so it survives a refresh
-        const updatedBookings = bookings.filter(b => b.id !== id);
-        setBookings(updatedBookings);
-        localStorage.setItem('turbomandi_admin_bookings', JSON.stringify(updatedBookings));
+        setBookings(prev => prev.filter(b => b.id !== id));
       } else {
         alert('Failed to delete booking.');
       }
@@ -58,7 +58,6 @@ export default function AdminBookingsPage() {
     }
   };
 
-  // Prevent UI flashing/hydration errors while local storage loads
   if (!isMounted) return null;
 
   return (
@@ -69,18 +68,15 @@ export default function AdminBookingsPage() {
           TURBOMANDI
         </div>
         <div className="hidden md:flex items-center gap-8 text-sm font-semibold">
-          <Link href="#" className="flex items-center gap-2 hover:text-red-500 transition"><Car className="w-4 h-4 text-red-600" /> Cars</Link>
+          <Link href="/vehicles" className="flex items-center gap-2 hover:text-red-500 transition"><Car className="w-4 h-4 text-red-600" /> Cars</Link>
           <Link href="#" className="flex items-center gap-2 hover:text-orange-500 transition"><Bike className="w-4 h-4 text-orange-500" /> Bikes</Link>
           <Link href="/parts" className="flex items-center gap-2 hover:text-yellow-500 transition"><Package className="w-4 h-4 text-yellow-500" /> Parts</Link>
           <Link href="/workshop" className="flex items-center gap-2 hover:text-red-500 transition"><Wrench className="w-4 h-4 text-red-600" /> Services</Link>
         </div>
         <div className="flex items-center gap-3">
-          <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition">
-            <PlusCircle className="w-4 h-4" /> Sell
-          </button>
-          <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition">
-            <MessageCircle className="w-4 h-4" /> WhatsApp
-          </button>
+          <Link href="/admin" className="text-xs text-zinc-400 hover:text-white px-3 py-2 transition">
+            &larr; Admin Dashboard
+          </Link>
         </div>
       </nav>
 
@@ -122,11 +118,15 @@ export default function AdminBookingsPage() {
                       <User className="w-4 h-4 text-zinc-500" /> {booking.customerName}
                     </td>
                     <td className="px-6 py-4 text-zinc-300">{booking.serviceType}</td>
-                    <td className="px-6 py-4 text-zinc-400 flex items-center gap-2">
-                      <Calendar className="w-4 h-4" /> {booking.date}
+                    <td className="px-6 py-4 text-zinc-400">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4" /> {booking.preferredDate || booking.date || 'TBD'}
+                      </div>
                     </td>
-                    <td className="px-6 py-4 text-emerald-500 font-medium flex items-center gap-2">
-                      <Phone className="w-4 h-4" /> {booking.phone}
+                    <td className="px-6 py-4 text-emerald-500 font-medium">
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-4 h-4" /> {booking.phone}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <span className="bg-yellow-950/40 text-yellow-500 border border-yellow-900/50 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5">

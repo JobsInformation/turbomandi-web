@@ -59,7 +59,7 @@ export async function POST(request: Request) {
       return newOrder;
     });
 
-    return NextResponse.json({ success: true, order: result }, { status: 201 });
+    return NextResponse.json({ success: true, orderId: result.id, order: result }, { status: 201 });
   } catch (error: any) {
     console.error('Checkout Error:', error);
     return NextResponse.json(

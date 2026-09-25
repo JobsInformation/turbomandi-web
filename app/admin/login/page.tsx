@@ -2,22 +2,23 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { loginAdmin } from './actions';
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Check password
-    if (password === 'turbo123') {
-      // Save session cookie for 1 day
-      document.cookie = "admin_session=authenticated; path=/; max-age=86400; SameSite=Lax";
-      router.push('/admin/orders');
+    setError('');
+    const result = await loginAdmin(password);
+    if (result.success) {
+      localStorage.setItem('turbomandi_user', JSON.stringify({ email: 'admin@turbomandi.com', role: 'ADMIN' }));
+      router.push('/admin');
+      router.refresh();
     } else {
-      setError('Invalid password. Please try again.');
+      setError(result.error ?? 'Invalid password. Please try again.');
     }
   };
 

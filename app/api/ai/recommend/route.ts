@@ -19,16 +19,16 @@ export async function POST(req: Request) {
     const searchTerms = keywords.length > 0 ? keywords : [lowerQuery];
 
     const partConditions = searchTerms.flatMap((term: string) => [
-      { name: { contains: term } },
-      { category: { contains: term } },
-      { sku: { contains: term } }
+      { name: { contains: term, mode: 'insensitive' as const } },
+      { category: { contains: term, mode: 'insensitive' as const } },
+      { sku: { contains: term, mode: 'insensitive' as const } }
     ]);
 
     const vehicleConditions = searchTerms.flatMap((term: string) => [
-      { make: { contains: term } },
-      { model: { contains: term } },
-      { type: { contains: term } },
-      { tag: { contains: term } }
+      { make: { contains: term, mode: 'insensitive' as const } },
+      { model: { contains: term, mode: 'insensitive' as const } },
+      { type: { contains: term, mode: 'insensitive' as const } },
+      { tag: { contains: term, mode: 'insensitive' as const } }
     ]);
 
     const parts = await prisma.part.findMany({

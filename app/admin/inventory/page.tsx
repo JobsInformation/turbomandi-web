@@ -58,6 +58,7 @@ export default function AdminInventoryPage() {
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-zinc-800 pb-6">
           <div>
+            <Link href="/admin" className="text-xs text-zinc-400 hover:text-white mb-2 inline-block transition">&larr; Admin Dashboard</Link>
             <h1 className="text-2xl font-black uppercase">Inventory Control</h1>
             <p className="text-xs text-zinc-400 mt-1">Manage, inspect, or delete live inventory records</p>
           </div>
