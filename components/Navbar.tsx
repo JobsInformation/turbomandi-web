@@ -5,6 +5,10 @@ import { Phone, Wrench, Car, Bike, Package, PlusCircle } from 'lucide-react';
 export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800 text-white">
+      <Link 
+  href="/" 
+  className="bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors inline-block"
+>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="text-2xl font-black italic tracking-wider bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400 bg-clip-text text-transparent">
           TURBOMANDI
