@@ -30,8 +30,3 @@ export default function Navbar() {
     </header>
   );
 }
-        </div>
-      </div>
-    </header>
-  );
-}
