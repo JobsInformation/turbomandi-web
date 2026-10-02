@@ -56,8 +56,4 @@ export default function Navbar() {
             <Link href="/vehicles/new" className="flex-1 text-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg">Sell</Link>
             <a href="https://wa.me/923001234567" target="_blank" rel="noopener noreferrer" className="flex-1 text-center border border-emerald-500 text-emerald-500 font-bold py-2 rounded-lg">WhatsApp</a>
           </div>
-        </div>
-      )}
-    </header>
-  );
 }
