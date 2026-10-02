@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+
+
 // SEO Metadata for Google
 export const metadata = {
   title: 'TurboMandi | Pakistan\'s Premium Hub for Vehicles & Parts',
@@ -9,6 +11,9 @@ export const metadata = {
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
+      <Link href="/" className="inline-flex items-center gap-2 text-zinc-400 hover:text-white bg-zinc-900 hover:bg-zinc-800 px-4 py-2 rounded-lg transition-colors mb-8 border border-zinc-800 w-fit">
+  <span>←</span> Back to Home
+</Link>
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 py-20 text-center">
         <h1 className="text-5xl md:text-7xl font-black italic tracking-tight mb-6">
