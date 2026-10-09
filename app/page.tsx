@@ -5,21 +5,23 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white text-gray-900">
       
-      {/* Hero Banner */}
-      <section className="bg-blue-900 text-white py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-blue-800 opacity-50 pattern-grid-lg"></div>
+      {/* Hero Banner (Royal Blue per specification) */}
+      <section 
+        className="text-white py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden shadow-lg"
+        style={{ backgroundColor: '#1e3a8a' }}
+      >
         <div className="max-w-7xl mx-auto relative z-10 text-center lg:text-left flex flex-col lg:flex-row items-center justify-between gap-12">
           
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-blue-800 text-blue-200 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-6 border border-blue-700">
-              <ShieldCheck className="w-4 h-4 text-blue-400" />
+            <div className="inline-flex items-center gap-2 bg-blue-800 text-blue-200 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-6 border border-blue-700 shadow-sm">
+              <ShieldCheck className="w-4 h-4 text-blue-300" />
               VIC Licensed Motor Car Trader (LMCT)
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight mb-6">
-              Built on Trust. <span className="text-blue-300 block">Focused on You.</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight mb-6 text-white">
+              Built on Trust. <span className="text-blue-200 block mt-1">Focused on You.</span>
             </h1>
-            <p className="text-lg sm:text-xl text-blue-100 mb-8 leading-relaxed">
-              Explore certified Victorian used vehicles, transparent pricing, guaranteed quality, and seamless financing tailored to your needs.
+            <p className="text-lg sm:text-xl text-blue-100 mb-8 leading-relaxed font-normal">
+              Explore certified Victorian used vehicles, transparent pricing, guaranteed quality, and seamless financing tailored to your needs[cite: 2].
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <Link
@@ -31,7 +33,7 @@ export default function HomePage() {
               </Link>
               <Link
                 href="/sell-car"
-                className="w-full sm:w-auto bg-blue-700 text-white hover:bg-blue-600 font-semibold px-8 py-4 rounded-xl border border-blue-600 transition-all flex items-center justify-center gap-2 text-base"
+                className="w-full sm:w-auto bg-blue-700 hover:bg-blue-600 text-white font-semibold px-8 py-4 rounded-xl border border-blue-600 transition-all flex items-center justify-center gap-2 text-base shadow-md"
               >
                 Value My Car
               </Link>
@@ -39,26 +41,26 @@ export default function HomePage() {
           </div>
 
           {/* Hero Quick Search Box */}
-          <div className="w-full max-w-md bg-white text-gray-900 p-6 rounded-2xl shadow-2xl border border-gray-100">
+          <div className="w-full max-w-md bg-white text-gray-900 p-6 sm:p-8 rounded-2xl shadow-2xl border border-gray-100">
             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <Search className="w-5 h-5 text-blue-600" />
               Find Your Next Vehicle
             </h3>
             <form action="/inventory" method="GET" className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">Make / Keyword</label>
+                <label className="block text-xs font-semibold text-gray-600 uppercase mb-1.5">Make / Keyword</label>
                 <input
                   type="text"
                   name="search"
                   placeholder="e.g. Toyota, Mazda, SUV"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm outline-none"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm outline-none text-gray-900 bg-gray-50"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">Maximum Price ($ AUD)</label>
+                <label className="block text-xs font-semibold text-gray-600 uppercase mb-1.5">Maximum Price ($ AUD)</label>
                 <select
                   name="maxPrice"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm outline-none bg-white"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm outline-none bg-white text-gray-900"
                 >
                   <option value="">Any Budget</option>
                   <option value="20000">Under $20,000</option>
@@ -69,7 +71,7 @@ export default function HomePage() {
               </div>
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-md text-sm"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-md text-sm cursor-pointer"
               >
                 Search Stock Inventory
               </button>
@@ -80,7 +82,7 @@ export default function HomePage() {
       </section>
 
       {/* Trust & Value Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-white">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-4">
             The Royal Auto Hub Standard
