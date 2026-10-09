@@ -59,6 +59,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (!context) throw new Error('useCart must be used within a CartProvider');
+  if (!context) {
+    // Safe fallback for static prerendering / isolated admin routes
+    return {
+      cart: [],
+      addToCart: () => {},
+      removeFromCart: () => {},
+      clearCart: () => {},
+    };
+  }
   return context;
 };

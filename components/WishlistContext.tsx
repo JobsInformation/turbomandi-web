@@ -55,6 +55,14 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
 export const useWishlist = () => {
   const context = useContext(WishlistContext);
-  if (!context) throw new Error('useWishlist must be used within a WishlistProvider');
+  if (!context) {
+    // Safe fallback for static prerendering / isolated admin routes
+    return {
+      wishlist: [],
+      addToWishlist: () => {},
+      removeFromWishlist: () => {},
+      isInWishlist: () => false,
+    };
+  }
   return context;
 };
