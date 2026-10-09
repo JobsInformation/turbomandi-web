@@ -1,29 +1,66 @@
 'use client';
 import Link from 'next/link';
-import { Phone, Wrench, Car, Bike, Package, PlusCircle } from 'lucide-react';
+import { ShoppingCart, Heart, ShieldCheck } from 'lucide-react';
+import { useCart } from './CartContext';
+import { useWishlist } from './WishlistContext';
 
 export default function Navbar() {
+  const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
+
   return (
-    <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800 text-white">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-black italic tracking-wider bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400 bg-clip-text text-transparent">
-          TURBOMANDI
-        </Link>
-        <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-zinc-300">
-          <Link href="/vehicles?type=CAR" className="flex items-center gap-2 hover:text-red-500"><Car className="w-4 h-4 text-red-500" /> Cars</Link>
-          <Link href="/vehicles?type=BIKE" className="flex items-center gap-2 hover:text-red-500"><Bike className="w-4 h-4 text-orange-500" /> Bikes</Link>
-          <Link href="/parts" className="flex items-center gap-2 hover:text-red-500"><Package className="w-4 h-4 text-yellow-500" /> Parts</Link>
-          <Link href="/services" className="flex items-center gap-2 hover:text-red-500"><Wrench className="w-4 h-4 text-red-500" /> Services</Link>
-        </nav>
-        <div className="flex items-center gap-3">
-          <Link href="/vehicles/new" className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 transition-all">
-            <PlusCircle className="w-4 h-4" /> Sell
-          </Link>
-          <a href="https://wa.me/923001234567" target="_blank" rel="noopener noreferrer" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 border border-emerald-500/30">
-            <Phone className="w-4 h-4" /> WhatsApp
-          </a>
-        </div>
+    <header className="sticky top-0 z-50 shadow-sm">
+      {/* Top Announcement Bar: Victoria location and dealership positioning statement */}
+      <div className="bg-blue-900 text-white text-xs font-semibold py-1.5 px-4 text-center tracking-wide">
+        📍 Victoria, Australia — Built on Trust. Focused on You.
       </div>
+
+      <nav className="bg-white border-b border-zinc-200 text-zinc-900">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          
+          {/* Brand Logo & Name */}
+          <Link href="/" className="flex items-center gap-2">
+            <div className="bg-blue-600 text-white font-black p-2 rounded-lg tracking-wider text-lg">
+              RAH
+            </div>
+            <div>
+              <span className="text-xl font-black tracking-tight text-blue-900 block leading-none">ROYAL AUTO HUB</span>
+              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Certified Dealership</span>
+            </div>
+          </Link>
+
+          {/* Navigation Links: Vehicles, Finance, Sell Your Car, Why Us, Contact */}
+          <div className="hidden md:flex items-center gap-6 font-semibold text-sm text-zinc-700">
+            <Link href="/vehicles" className="hover:text-blue-600 transition-colors">Vehicles</Link>
+            <Link href="/finance" className="hover:text-blue-600 transition-colors">Finance</Link>
+            <Link href="/sell" className="hover:text-blue-600 transition-colors">Sell Your Car</Link>
+            <Link href="/why-us" className="hover:text-blue-600 transition-colors">Why Us</Link>
+            <Link href="/contact" className="hover:text-blue-600 transition-colors">Contact</Link>
+          </div>
+
+          {/* Action Icons */}
+          <div className="flex items-center gap-3">
+            <Link href="/wishlist" className="relative p-2 bg-zinc-100 rounded-full hover:bg-zinc-200 transition-colors text-zinc-700" title="Saved Vehicles">
+              <Heart className="w-5 h-5 text-blue-600" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full shadow">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+
+            <Link href="/cart" className="relative p-2 bg-zinc-100 rounded-full hover:bg-zinc-200 transition-colors text-zinc-700" title="Shopping Cart">
+              <ShoppingCart className="w-5 h-5 text-zinc-700" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full shadow">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+          </div>
+
+        </div>
+      </nav>
     </header>
   );
 }
