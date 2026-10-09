@@ -2,13 +2,14 @@
   "name": "turbomandi-web",
   "version": "0.1.0",
   "private": true,
- "scripts": {
-    "build": "npx prisma db push --accept-data-loss && npx prisma generate && next build",
+  "scripts": {
+    "build": "npx prisma generate && next build",
     "dev": "next dev",
     "start": "next start"
   },
   "dependencies": {
     "@types/bcrypt": "^6.0.0",
+    "@vercel/analytics": "^2.0.1",
     "bcrypt": "^6.0.0",
     "clsx": "^2.1.1",
     "framer-motion": "^13.4.0",
