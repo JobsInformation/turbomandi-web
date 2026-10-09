@@ -7,33 +7,33 @@ export default function HomePage() {
       
       {/* Hero Banner (Royal Blue per specification) */}
       <section 
-        className="text-white py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden shadow-lg"
+        className="text-white py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden shadow-md"
         style={{ backgroundColor: '#1e3a8a' }}
       >
-        <div className="max-w-7xl mx-auto relative z-10 text-center lg:text-left flex flex-col lg:flex-row items-center justify-between gap-12">
+        <div className="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
           
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-blue-800 text-blue-200 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-6 border border-blue-700 shadow-sm">
+          <div className="max-w-2xl text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 bg-blue-800/80 text-blue-200 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-6 border border-blue-600/50 shadow-sm">
               <ShieldCheck className="w-4 h-4 text-blue-300" />
               VIC Licensed Motor Car Trader (LMCT)
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight mb-6 text-white">
-              Built on Trust. <span className="text-blue-200 block mt-1">Focused on You.</span>
+              Built on Trust. <span className="text-blue-200 block mt-2">Focused on You.</span>
             </h1>
             <p className="text-lg sm:text-xl text-blue-100 mb-8 leading-relaxed font-normal">
-              Explore certified Victorian used vehicles, transparent pricing, guaranteed quality, and seamless financing tailored to your needs[cite: 2].
+              Explore certified Victorian used vehicles, transparent pricing, guaranteed quality, and seamless financing tailored to your needs.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <Link
                 href="/inventory"
-                className="w-full sm:w-auto bg-white text-blue-900 hover:bg-blue-50 font-bold px-8 py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-base"
+                className="w-full sm:w-auto bg-white text-blue-900 hover:bg-blue-50 font-bold px-8 py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-base no-underline"
               >
                 Browse Vehicles
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
                 href="/sell-car"
-                className="w-full sm:w-auto bg-blue-700 hover:bg-blue-600 text-white font-semibold px-8 py-4 rounded-xl border border-blue-600 transition-all flex items-center justify-center gap-2 text-base shadow-md"
+                className="w-full sm:w-auto bg-blue-700 hover:bg-blue-600 text-white font-semibold px-8 py-4 rounded-xl border border-blue-500 transition-all flex items-center justify-center gap-2 text-base shadow-md no-underline"
               >
                 Value My Car
               </Link>
@@ -119,7 +119,7 @@ export default function HomePage() {
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-2">Transparent Pricing</h3>
             <p className="text-gray-600 text-sm leading-relaxed">
-              Clear advertised pricing with upfront details regarding government charges and transfer requirements.
+              Clear advertised pricing with upfront details regarding government charges and transfer requirements[cite: 1, 2].
             </p>
           </div>
         </div>
@@ -135,12 +135,12 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Flexible Finance Options</h3>
               <p className="text-gray-600 text-sm mb-6">
-                Estimate your borrowing power and request a finance callback tailored to your personal or business requirements.
+                Estimate your borrowing power and request a finance callback tailored to your personal or business requirements[cite: 1, 2].
               </p>
             </div>
             <Link
               href="/finance"
-              className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 text-sm"
+              className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 text-sm no-underline"
             >
               Explore Finance Calculator <ArrowRight className="w-4 h-4" />
             </Link>
@@ -153,12 +153,12 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Sell or Trade-In Your Car</h3>
               <p className="text-gray-600 text-sm mb-6">
-                Submit your vehicle details for an indicative valuation and fast appraisal from our acquisitions team.
+                Submit your vehicle details for an indicative valuation and fast appraisal from our acquisitions team[cite: 1, 2].
               </p>
             </div>
             <Link
               href="/sell-car"
-              className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 text-sm"
+              className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 text-sm no-underline"
             >
               Request Trade-In Valuation <ArrowRight className="w-4 h-4" />
             </Link>
