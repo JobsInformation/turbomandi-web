@@ -1,86 +1,120 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, ArrowLeft, Trash2, ArrowRight } from 'lucide-react';
-
-interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-}
+import { ShoppingCart, ShieldCheck, ArrowRight, Trash2, Car, CheckCircle2, Calculator } from 'lucide-react';
 
 export default function CartPage() {
-  const [cart, setCart] = useState<CartItem[]>([]);
-
-  useEffect(() => {
-    const savedCart = localStorage.getItem('turbomandi_cart');
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
-    }
-  }, []);
-
-  const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-  const removeFromCart = (id: number) => {
-    const newCart = cart.filter(item => item.id !== id);
-    setCart(newCart);
-    localStorage.setItem('turbomandi_cart', JSON.stringify(newCart));
-  };
-
   return (
-    <main className="min-h-screen bg-zinc-950 text-white p-6 md:p-12">
-      <div className="max-w-4xl mx-auto">
-        <Link href="/parts" className="text-zinc-400 hover:text-white text-sm mb-6 inline-flex items-center gap-1 transition">
-          <ArrowLeft className="w-4 h-4" /> Back to Parts Store
-        </Link>
-        
-        <h1 className="text-3xl font-black uppercase tracking-tight mb-8 flex items-center gap-3">
-          <ShoppingBag className="text-red-600 w-8 h-8" /> Shopping Cart
-        </h1>
-
-        {cart.length === 0 ? (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-12 text-center">
-            <p className="text-zinc-500 mb-4">Your cart is currently empty.</p>
-            <Link href="/parts" className="text-red-500 font-semibold hover:text-red-400 inline-flex items-center gap-1">
-              Browse Auto Parts <ArrowRight className="w-4 h-4" />
-            </Link>
+    <div className="min-h-screen bg-white text-gray-900 pb-20">
+      
+      {/* Page Header */}
+      <section className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto">
+          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-800 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-3 border border-blue-100 shadow-sm">
+            <ShoppingCart className="w-4 h-4 text-blue-600" />
+            Secure Reservation & Enquiries
           </div>
-        ) : (
-          <div className="space-y-6">
-            <div className="space-y-4">
-              {cart.map((item) => (
-                <div key={item.id} className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl flex justify-between items-center">
-                  <div>
-                    <h3 className="font-bold text-lg">{item.name}</h3>
-                    <p className="text-zinc-500 text-sm">Qty: {item.quantity}</p>
-                  </div>
-                  <div className="flex items-center gap-6">
-                    <p className="font-black text-red-500 text-lg">PKR {(item.price * item.quantity).toLocaleString()}</p>
-                    <button onClick={() => removeFromCart(item.id)} className="text-zinc-600 hover:text-red-500 transition">
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+            Your Vehicle Cart & Summary
+          </h1>
+          <p className="text-gray-600 mt-2 text-base">
+            Review your shortlisted vehicles, check drive-away cost breakdowns, and secure your test drive booking.
+          </p>
+        </div>
+      </section>
+
+      {/* Main Cart Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          
+          {/* Cart Items List */}
+          <div className="lg:col-span-2 space-y-6">
+            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <Car className="w-5 h-5 text-blue-600" />
+              Shortlisted Vehicles (1)
+            </h2>
+
+            {/* Cart Item Card */}
+            <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center gap-6 justify-between">
+              <div className="flex items-center gap-4 w-full sm:w-auto">
+                <div className="w-24 h-24 bg-gray-100 rounded-2xl flex items-center justify-center shrink-0 border border-gray-200">
+                  <Car className="w-10 h-10 text-gray-400" />
                 </div>
-              ))}
+                <div>
+                  <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-blue-200">
+                    VIC Certified
+                  </span>
+                  <h3 className="font-bold text-lg text-gray-900 mt-1">Toyota Camry Ascent Hybrid</h3>
+                  <p className="text-xs text-gray-500">2023 • Automatic • 45,000 km</p>
+                  <p className="text-blue-600 font-extrabold text-lg mt-1">$32,990 <span className="text-xs text-gray-400 font-normal">Drive Away</span></p>
+                </div>
+              </div>
+
+              <button className="text-gray-400 hover:text-red-600 p-2.5 rounded-xl hover:bg-red-50 transition-colors self-end sm:self-center cursor-pointer" title="Remove item">
+                <Trash2 className="w-5 h-5" />
+              </button>
             </div>
 
-            <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4">
-              <div>
-                <p className="text-xs text-zinc-500 uppercase tracking-wider">Total Amount</p>
-                <p className="text-2xl font-black text-white">PKR {totalAmount.toLocaleString()}</p>
-              </div>
-              <Link 
-                href="/checkout" 
-                className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl font-bold text-base transition shadow-lg shadow-red-600/20 inline-flex items-center justify-center gap-2"
-              >
-                Proceed to Checkout <ArrowRight className="w-5 h-5" />
-              </Link>
+            {/* Inclusions Box */}
+            <div className="bg-blue-50/50 p-6 rounded-3xl border border-blue-100 space-y-3">
+              <h4 className="font-bold text-gray-900 text-sm flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-blue-600" />
+                All Royal Auto Hub Purchases Include:
+              </h4>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-gray-700 font-medium">
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" /> Roadworthy Certificate (RWC)</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" /> PPSR Clear Title Guarantee</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" /> VIC Stamp Duty & Transfer Included</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" /> 3-Month Statutory Warranty</li>
+              </ul>
             </div>
           </div>
-        )}
+
+          {/* Order Summary & Checkout Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm space-y-6 sticky top-28">
+              <h2 className="font-bold text-gray-900 text-base pb-4 border-b border-gray-100 flex items-center gap-2">
+                <Calculator className="w-4 h-4 text-blue-600" />
+                Price Breakdown
+              </h2>
+
+              <div className="space-y-3 text-sm text-gray-600">
+                <div className="flex justify-between">
+                  <span>Vehicle Price</span>
+                  <span className="font-semibold text-gray-900">$32,990</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>VIC Stamp Duty</span>
+                  <span className="font-semibold text-emerald-600">Included</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Roadworthy & Inspection</span>
+                  <span className="font-semibold text-emerald-600">Included</span>
+                </div>
+                <div className="pt-4 border-t border-gray-200 flex justify-between text-base font-extrabold text-gray-900">
+                  <span>Total Drive Away</span>
+                  <span className="text-blue-600">$32,990</span>
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <Link
+                  href="/checkout"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-2xl text-sm transition-colors flex items-center justify-center gap-2 no-underline shadow-md shadow-blue-600/20"
+                >
+                  Proceed to Enquiry / Hold <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  href="/vehicles"
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 rounded-2xl text-sm transition-colors flex items-center justify-center no-underline border border-gray-200"
+                >
+                  Continue Browsing
+                </Link>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
-    </main>
+
+    </div>
   );
 }
