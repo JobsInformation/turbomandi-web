@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import { Car, ShieldCheck, CheckCircle2, ArrowRight, Calendar, Phone, Mail, MapPin, ShoppingCart } from 'lucide-react';
 
-export default function VehicleDetailPage({ params }: { params: { id: string } }) {
-  // Format the vehicle title nicely from the URL slug
-  const vehicleName = params.id
+export default async function VehicleDetailPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
+  const resolvedParams = await params;
+  const vehicleId = resolvedParams?.id || 'toyota-camry';
+  
+  const vehicleName = vehicleId
     .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 
   return (
@@ -24,7 +26,7 @@ export default function VehicleDetailPage({ params }: { params: { id: string } }
                 VIC LMCT Certified & Inspected
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
-                {vehicleName || 'Toyota Camry Ascent'}
+                {vehicleName}
               </h1>
               <p className="text-gray-600 mt-1 text-sm">
                 2023 Model • Automatic • Hybrid • 45,000 km • Melbourne Showroom
@@ -76,7 +78,7 @@ export default function VehicleDetailPage({ params }: { params: { id: string } }
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 text-sm">
                 <div>
                   <span className="block text-xs font-semibold text-gray-400 uppercase">Make / Model</span>
-                  <span className="font-bold text-gray-900 mt-1 block">Toyota Camry</span>
+                  <span className="font-bold text-gray-900 mt-1 block">{vehicleName}</span>
                 </div>
                 <div>
                   <span className="block text-xs font-semibold text-gray-400 uppercase">Year</span>
