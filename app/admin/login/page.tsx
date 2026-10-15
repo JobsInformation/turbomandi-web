@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, Lock, ArrowRight, User } from 'lucide-react';
+import { ShieldCheck, Lock, ArrowRight } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
@@ -11,8 +11,8 @@ export default function AdminLoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simple secure admin check for Royal Auto Hub management
-    if (password === 'admin123' || password === 'royalauto2026') {
+    // Updated secure admin password for Royal Auto Hub
+    if (password === 'RoyalAuto#2026!' || password === 'admin123') {
       localStorage.setItem('royal_admin_auth', 'true');
       router.push('/admin/dashboard');
     } else {
