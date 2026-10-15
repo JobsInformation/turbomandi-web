@@ -6,23 +6,31 @@ import { ShieldCheck, Lock, ArrowRight, Loader2 } from 'lucide-react';
 export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleLogin = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     setIsLoading(true);
-    
-    // Save authentication state
-    try {
-      localStorage.setItem('royal_admin_auth', 'true');
-      document.cookie = "royal_admin_auth=true; path=/; max-age=86400";
-    } catch (err) {
-      console.error('Storage error:', err);
-    }
+    setErrorMsg('');
 
-    // Brief delay to show loading state, then navigate
-    setTimeout(() => {
-      window.location.href = '/admin/dashboard';
-    }, 400);
+    try {
+      // Import and call server action dynamically
+      const { verifyAdminPassword } = await import('./actions');
+      const isValid = await verifyAdminPassword(password);
+
+      if (isValid) {
+        localStorage.setItem('royal_admin_auth', 'true');
+        document.cookie = "royal_admin_auth=true; path=/; max-age=86400";
+        window.location.replace('/admin/dashboard');
+      } else {
+        setIsLoading(false);
+        setErrorMsg('Incorrect password. Please check your ADMIN_PASSWORD environment variable.');
+      }
+    } catch (err) {
+      console.error(err);
+      setIsLoading(false);
+      setErrorMsg('An error occurred during authentication. Please try again.');
+    }
   };
 
   return (
@@ -42,7 +50,7 @@ export default function AdminLoginPage() {
               Admin Portal Access
             </h1>
             <p className="text-gray-500 text-xs mt-1">
-              Click below to instantly unlock the Royal Auto Hub admin dashboard.
+              Enter your password (configured via environment variables) to unlock the dashboard.
             </p>
           </div>
         </div>
@@ -52,11 +60,15 @@ export default function AdminLoginPage() {
             <label className="block text-xs font-semibold text-gray-700 uppercase mb-2">Admin Password</label>
             <input
               type="password"
+              required
               value={password}
               onChange={e => setPassword(e.target.value)}
-              placeholder="Enter password (e.g. RoyalAuto#2026!)..."
+              placeholder="Enter password..."
               className="w-full p-4 rounded-2xl border border-gray-300 text-sm focus:ring-2 focus:ring-blue-600 outline-none bg-gray-50 text-gray-900 font-medium"
             />
+            {errorMsg && (
+              <p className="text-xs text-red-600 font-semibold mt-2">{errorMsg}</p>
+            )}
           </div>
 
           <button
@@ -66,7 +78,7 @@ export default function AdminLoginPage() {
           >
             {isLoading ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" /> Unlocking Dashboard...
+                <Loader2 className="w-5 h-5 animate-spin" /> Verifying Password...
               </>
             ) : (
               <>
