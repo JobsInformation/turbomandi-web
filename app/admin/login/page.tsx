@@ -6,15 +6,15 @@ import { ShieldCheck, Lock, ArrowRight } from 'lucide-react';
 export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
 
-  const handleLogin = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
     
-    // Store auth token in localStorage and cookies for robust access
+    // Save authentication state
     localStorage.setItem('royal_admin_auth', 'true');
     document.cookie = "royal_admin_auth=true; path=/; max-age=86400";
     
     // Force direct window navigation to dashboard
-    window.location.href = '/admin/dashboard';
+    window.location.replace('/admin/dashboard');
   };
 
   return (
@@ -34,7 +34,7 @@ export default function AdminLoginPage() {
               Admin Portal Access
             </h1>
             <p className="text-gray-500 text-xs mt-1">
-              Click below to instantly unlock the Royal Auto Hub admin dashboard.
+              Enter your password and click below to unlock the Royal Auto Hub admin dashboard.
             </p>
           </div>
         </div>
@@ -52,8 +52,7 @@ export default function AdminLoginPage() {
           </div>
 
           <button
-            type="button"
-            onClick={() => handleLogin()}
+            type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl text-sm transition-colors shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2 cursor-pointer"
           >
             Unlock Dashboard <ArrowRight className="w-4 h-4" />
