@@ -1,4 +1,4 @@
-'user client';
+'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -170,7 +170,7 @@ export default function CheckoutPage() {
                   onClick={() => setPaymentMethod('card')}
                   className={`p-5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                     paymentMethod === 'card'
-                      ? 'border-blue-600 bg-blue-50/50 ring-2 ring-blue-600/2k'
+                      ? 'border-blue-600 bg-blue-50/50 ring-2 ring-blue-600/20'
                       : 'border-gray-200 hover:border-gray-300 bg-white'
                   }`}
                 >
