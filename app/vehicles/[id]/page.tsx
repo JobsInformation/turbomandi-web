@@ -1,14 +1,36 @@
-import Link from 'next/link';
-import { Car, ShieldCheck, CheckCircle2, ArrowRight, Calendar, Phone, Mail, MapPin, ShoppingCart } from 'lucide-react';
+'use client';
 
-export default async function VehicleDetailPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
-  const resolvedParams = await params;
-  const vehicleId = resolvedParams?.id || 'toyota-camry';
+import { useState } from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { Car, ShieldCheck, CheckCircle2, ArrowRight, Calendar, Phone, MapPin, ShoppingCart, Check } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
+
+export default function VehicleDetailPage() {
+  const params = useParams();
+  const rawId = params?.id || 'toyota-camry';
+  const vehicleId = Array.isArray(rawId) ? rawId[0] : rawId;
   
   const vehicleName = vehicleId
     .split('-')
-    .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+
+  const { addToCart } = useCart();
+  const [isAdded, setIsAdded] = useState(false);
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: vehicleId,
+      name: vehicleName,
+      specs: '2023 • Automatic • Hybrid • 45,000 km',
+      price: 32990,
+      displayPrice: '$32,990 Drive Away',
+      type: 'vehicle',
+    });
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 2000);
+  };
 
   return (
     <div className="min-h-screen bg-white text-gray-900 pb-20">
@@ -113,7 +135,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                 Book Test Drive / Enquire
               </h3>
 
-              <form className="space-y-4">
+              <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 uppercase mb-1.5">Full Name</label>
                   <input
@@ -132,28 +154,23 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase mb-1.5">Preferred Date</label>
-                  <input
-                    type="date"
-                    className="w-full p-3 rounded-2xl border border-gray-300 text-sm bg-white text-gray-900 outline-none focus:ring-2 focus:ring-blue-600"
-                  />
-                </div>
-
                 <button
-                  type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-2xl text-sm transition-colors shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2 cursor-pointer"
+                  onClick={handleAddToCart}
+                  className={`w-full font-bold py-3.5 rounded-2xl text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md ${
+                    isAdded ? 'bg-emerald-600 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/25'
+                  }`}
                 >
-                  Confirm Test Drive Booking <ArrowRight className="w-4 h-4" />
+                  {isAdded ? (
+                    <>
+                      <Check className="w-4 h-4" /> Added to Cart Successfully!
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-4 h-4" /> Add to Enquiries Cart
+                    </>
+                  )}
                 </button>
-
-                <Link
-                  href="/cart"
-                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3.5 rounded-2xl text-sm transition-colors flex items-center justify-center gap-2 no-underline border border-gray-200"
-                >
-                  <ShoppingCart className="w-4 h-4 text-blue-600" /> Add to Enquiries Cart
-                </Link>
-              </form>
+              </div>
 
               <div className="pt-4 border-t border-gray-100 text-xs text-gray-500 space-y-2">
                 <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-blue-600" /> Showroom: +61 3 9000 0000</p>

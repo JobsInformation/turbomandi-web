@@ -1,7 +1,60 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
-import { Wrench, ShieldCheck, ShoppingCart } from 'lucide-react';
+import { Wrench, ShieldCheck, ShoppingCart, Check } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 
 export default function PartsPage() {
+  const { addToCart } = useCart();
+  const [addedIds, setAddedIds] = useState<{ [key: string]: boolean }>({});
+
+  const parts = [
+    {
+      id: 'civic-suspension',
+      name: 'Civic Turbo Suspension Kit',
+      category: 'Suspension',
+      sku: 'HON-CIV-1234',
+      stock: 13,
+      price: 1599,
+      displayPrice: '$1,599 AUD',
+    },
+    {
+      id: 'ngk-spark-plugs',
+      name: 'NGK Iridium Spark Plugs',
+      category: 'Engine Maintenance',
+      sku: 'NGK-SPK-9988',
+      stock: 49,
+      price: 145,
+      displayPrice: '$145 AUD',
+    },
+    {
+      id: 'liqui-moly-oil',
+      name: 'Liqui Moly 5W-40 Engine Oil',
+      category: 'Fluids & Lubricants',
+      sku: 'LQM-OIL-5544',
+      stock: 29,
+      price: 120,
+      displayPrice: '$120 AUD',
+    },
+  ];
+
+  const handleAddToCart = (part: typeof parts[0]) => {
+    addToCart({
+      id: part.id,
+      name: part.name,
+      specs: `SKU: ${part.sku} • ${part.category}`,
+      price: part.price,
+      displayPrice: part.displayPrice,
+      type: 'part',
+    });
+
+    setAddedIds(prev => ({ ...prev, [part.id]: true }));
+    setTimeout(() => {
+      setAddedIds(prev => ({ ...prev, [part.id]: false }));
+    }, 2000);
+  };
+
   return (
     <div className="min-h-screen bg-white text-gray-900 pb-20">
       
@@ -25,59 +78,42 @@ export default function PartsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           
-          {/* Part Card 1 */}
-          <div className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between p-6">
-            <div>
-              <div className="flex justify-between items-start mb-4">
-                <span className="bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                  Suspension
-                </span>
-                <span className="text-xs text-gray-400 font-mono">SKU: HON-CIV-1234</span>
+          {parts.map(part => {
+            const isAdded = addedIds[part.id];
+            return (
+              <div key={part.id} className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between p-6">
+                <div>
+                  <div className="flex justify-between items-start mb-4">
+                    <span className="bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                      {part.category}
+                    </span>
+                    <span className="text-xs text-gray-400 font-mono">SKU: {part.sku}</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">{part.name}</h3>
+                  <p className="text-xs text-emerald-600 font-semibold mb-4">✓ Stock Remaining: {part.stock}</p>
+                  <p className="text-2xl font-extrabold text-blue-600 mb-6">{part.displayPrice}</p>
+                </div>
+                <button
+                  onClick={() => handleAddToCart(part)}
+                  className={`w-full font-semibold py-3 rounded-2xl text-sm transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer ${
+                    isAdded
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
+                >
+                  {isAdded ? (
+                    <>
+                      <Check className="w-4 h-4" /> Added to Cart!
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-4 h-4" /> Add to Cart
+                    </>
+                  )}
+                </button>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">Civic Turbo Suspension Kit</h3>
-              <p className="text-xs text-emerald-600 font-semibold mb-4">✓ Stock Remaining: 13</p>
-              <p className="text-2xl font-extrabold text-blue-600 mb-6">$1,599 <span className="text-xs font-normal text-gray-500">AUD</span></p>
-            </div>
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-2xl text-sm transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer">
-              <ShoppingCart className="w-4 h-4" /> Add to Cart
-            </button>
-          </div>
-
-          {/* Part Card 2 */}
-          <div className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between p-6">
-            <div>
-              <div className="flex justify-between items-start mb-4">
-                <span className="bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                  Engine Maintenance
-                </span>
-                <span className="text-xs text-gray-400 font-mono">SKU: NGK-SPK-9988</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">NGK Iridium Spark Plugs</h3>
-              <p className="text-xs text-emerald-600 font-semibold mb-4">✓ Stock Remaining: 49</p>
-              <p className="text-2xl font-extrabold text-blue-600 mb-6">$145 <span className="text-xs font-normal text-gray-500">AUD</span></p>
-            </div>
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-2xl text-sm transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer">
-              <ShoppingCart className="w-4 h-4" /> Add to Cart
-            </button>
-          </div>
-
-          {/* Part Card 3 */}
-          <div className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between p-6">
-            <div>
-              <div className="flex justify-between items-start mb-4">
-                <span className="bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                  Fluids & Lubricants
-                </span>
-                <span className="text-xs text-gray-400 font-mono">SKU: LQM-OIL-5544</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">Liqui Moly 5W-40 Engine Oil</h3>
-              <p className="text-xs text-emerald-600 font-semibold mb-4">✓ Stock Remaining: 29</p>
-              <p className="text-2xl font-extrabold text-blue-600 mb-6">$120 <span className="text-xs font-normal text-gray-500">AUD</span></p>
-            </div>
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-2xl text-sm transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer">
-              <ShoppingCart className="w-4 h-4" /> Add to Cart
-            </button>
-          </div>
+            );
+          })}
 
         </div>
       </div>

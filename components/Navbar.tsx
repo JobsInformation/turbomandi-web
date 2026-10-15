@@ -1,9 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Home, Car, ShoppingCart, Heart, ShieldCheck } from 'lucide-react';
+import { Home, Car, ShoppingCart, Heart, ShieldCheck, Wrench } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 
 export default function Navbar() {
+  const { totalItems } = useCart();
+
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -46,6 +49,7 @@ export default function Navbar() {
               href="/parts"
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-white transition-all no-underline"
             >
+              <Wrench className="w-4 h-4 text-blue-600" />
               Parts
             </Link>
 
@@ -73,6 +77,11 @@ export default function Navbar() {
               aria-label="Cart"
             >
               <ShoppingCart className="w-5 h-5" />
+              {totalItems > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-blue-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+                  {totalItems}
+                </span>
+              )}
             </Link>
 
             <Link
