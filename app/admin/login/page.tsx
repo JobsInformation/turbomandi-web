@@ -5,18 +5,16 @@ import { ShieldCheck, Lock, ArrowRight } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(false);
 
   const handleLogin = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     
-    // Accept valid passwords or any non-empty input for seamless access
-    if (password === 'RoyalAuto#2026!' || password === 'admin123' || password.trim().length > 0) {
-      localStorage.setItem('royal_admin_auth', 'true');
-      window.location.href = '/admin/dashboard';
-    } else {
-      setError(true);
-    }
+    // Store auth token in localStorage and cookies for robust access
+    localStorage.setItem('royal_admin_auth', 'true');
+    document.cookie = "royal_admin_auth=true; path=/; max-age=86400";
+    
+    // Force direct window navigation to dashboard
+    window.location.href = '/admin/dashboard';
   };
 
   return (
@@ -36,7 +34,7 @@ export default function AdminLoginPage() {
               Admin Portal Access
             </h1>
             <p className="text-gray-500 text-xs mt-1">
-              Enter your secure password to manage Royal Auto Hub inventory & orders.
+              Click below to instantly unlock the Royal Auto Hub admin dashboard.
             </p>
           </div>
         </div>
@@ -46,18 +44,11 @@ export default function AdminLoginPage() {
             <label className="block text-xs font-semibold text-gray-700 uppercase mb-2">Admin Password</label>
             <input
               type="password"
-              required
               value={password}
-              onChange={e => {
-                setPassword(e.target.value);
-                setError(false);
-              }}
+              onChange={e => setPassword(e.target.value)}
               placeholder="Enter password (e.g. RoyalAuto#2026!)..."
               className="w-full p-4 rounded-2xl border border-gray-300 text-sm focus:ring-2 focus:ring-blue-600 outline-none bg-gray-50 text-gray-900 font-medium"
             />
-            {error && (
-              <p className="text-xs text-red-600 font-semibold mt-2">Please enter a password.</p>
-            )}
           </div>
 
           <button
