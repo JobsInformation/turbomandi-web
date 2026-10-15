@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   ShieldCheck, Car, ShoppingCart, LogOut, TrendingUp, Clock, 
-  Lock, ArrowRight, Loader2, Plus, Trash2, CheckCircle, Wrench, Package, Search, X, AlertCircle
+  Lock, ArrowRight, Loader2, Plus, Trash2, CheckCircle, Search, X 
 } from 'lucide-react';
 
 interface Vehicle {
@@ -40,7 +40,7 @@ export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'vehicles' | 'orders' | 'workshop' | 'parts'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'vehicles' | 'orders' | 'workshop'>('overview');
   const [searchQuery, setSearchQuery] = useState('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -48,7 +48,9 @@ export default function AdminPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('royal_admin_vehicles');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) { /* fallback */ }
+      }
     }
     return [
       { id: 'v1', title: '2024 Toyota Camry Ascent Hybrid', price: 42990, year: 2024, mileage: '12,400 km', transmission: 'Automatic', fuel: 'Hybrid', status: 'Available', image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=800&q=80' },
@@ -61,7 +63,9 @@ export default function AdminPage() {
   const [orders, setOrders] = useState<Order[]>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('royal_admin_orders');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) { /* fallback */ }
+      }
     }
     return [
       { id: 'ord-1', customer: 'John Smith', item: 'Toyota Camry Ascent Hybrid', method: 'Credit / Debit Card', status: 'Confirmed', date: '2026-10-14' },
@@ -73,7 +77,9 @@ export default function AdminPage() {
   const [bookings, setBookings] = useState<WorkshopBooking[]>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('royal_admin_bookings');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) { /* fallback */ }
+      }
     }
     return [
       { id: 'bk-1', customer: 'David Miller', service: '120-Point LMCT Safety Inspection', date: '2026-10-16 10:00 AM', status: 'Scheduled' },
@@ -151,11 +157,11 @@ export default function AdminPage() {
     showToast('Vehicle added successfully to inventory!');
   };
 
-  const handleDeleteVehicle = (id: string) => {
-    if (confirm('Are you sure you want to remove this vehicle from inventory?')) {
-      setVehicles(vehicles.filter(v => v.id !== id));
-      showToast('Vehicle removed from inventory.');
-    }
+  const handleDeleteVehicle = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    // Direct state removal without window.confirm to guarantee instant interactivity
+    setVehicles(prev => prev.filter(v => v.id !== id));
+    showToast('Vehicle successfully removed from inventory.');
   };
 
   const handleAddOrder = (e: React.FormEvent) => {
@@ -179,11 +185,10 @@ export default function AdminPage() {
     showToast(`Order status updated to "${newStatus}"`);
   };
 
-  const handleDeleteOrder = (id: string) => {
-    if (confirm('Delete this customer order?')) {
-      setOrders(orders.filter(o => o.id !== id));
-      showToast('Order deleted.');
-    }
+  const handleDeleteOrder = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setOrders(prev => prev.filter(o => o.id !== id));
+    showToast('Order successfully deleted.');
   };
 
   // If NOT logged in
@@ -255,7 +260,7 @@ export default function AdminPage() {
       
       {/* Toast Notification Banner */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-gray-700 animate-bounce">
+        <div className="fixed bottom-6 right-6 z-50 bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-gray-700">
           <CheckCircle className="w-5 h-5 text-emerald-400" />
           <span className="text-xs font-bold">{toastMessage}</span>
         </div>
@@ -454,11 +459,12 @@ export default function AdminPage() {
                         </td>
                         <td className="p-4 text-right">
                           <button
-                            onClick={() => handleDeleteOrder(ord.id)}
-                            className="text-gray-400 hover:text-red-600 p-2 transition-colors cursor-pointer"
+                            type="button"
+                            onClick={(e) => handleDeleteOrder(ord.id, e)}
+                            className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2.5 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center border border-red-200"
                             title="Delete Order"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4 pointer-events-none" />
                           </button>
                         </td>
                       </tr>
@@ -512,11 +518,12 @@ export default function AdminPage() {
                       <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
                         <span className="text-xl font-extrabold text-gray-900">${v.price.toLocaleString()}</span>
                         <button
-                          onClick={() => handleDeleteVehicle(v.id)}
-                          className="bg-red-50 hover:bg-red-100 text-red-600 p-2.5 rounded-xl transition-colors cursor-pointer border border-red-100"
+                          type="button"
+                          onClick={(e) => handleDeleteVehicle(v.id, e)}
+                          className="bg-red-50 hover:bg-red-100 text-red-600 p-3 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center border border-red-200 shadow-sm"
                           title="Remove Vehicle"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 pointer-events-none" />
                         </button>
                       </div>
                     </div>
@@ -577,10 +584,11 @@ export default function AdminPage() {
                       </td>
                       <td className="p-4 text-right">
                         <button
-                          onClick={() => handleDeleteOrder(ord.id)}
-                          className="text-gray-400 hover:text-red-600 p-2 transition-colors cursor-pointer"
+                          type="button"
+                          onClick={(e) => handleDeleteOrder(ord.id, e)}
+                          className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2.5 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center border border-red-200"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 pointer-events-none" />
                         </button>
                       </td>
                     </tr>
@@ -625,13 +633,15 @@ export default function AdminPage() {
                       </td>
                       <td className="p-4 text-right">
                         <button
-                          onClick={() => {
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setBookings(bookings.filter(b => b.id !== bk.id));
-                            showToast('Booking archived.');
+                            showToast('Booking successfully removed.');
                           }}
-                          className="text-gray-400 hover:text-red-600 p-2 cursor-pointer"
+                          className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2.5 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center border border-red-200"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 pointer-events-none" />
                         </button>
                       </td>
                     </tr>
