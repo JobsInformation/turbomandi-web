@@ -1,12 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ShieldCheck, Car, ShoppingCart, LogOut, TrendingUp, Clock } from 'lucide-react';
 
-export default function AdminDashboardPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-
+export default function AdminPage() {
   const handleLogout = () => {
     localStorage.removeItem('royal_admin_auth');
     document.cookie = "royal_admin_auth=; path=/; max-age=0";
