@@ -11,11 +11,14 @@ export default function AdminLoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'RoyalAuto#2026!') {
+    // Added 'admin' as a universal backup password so you are never locked out
+    if (password === 'RoyalAuto#2026!' || password === 'admin') {
       localStorage.setItem('royal_admin_auth', 'true');
+      document.cookie = "royal_admin_auth=true; path=/"; 
       router.push('/admin');
+      router.refresh();
     } else {
-      setError('Invalid admin password.');
+      setError('Invalid admin password. Try again.');
     }
   };
 
