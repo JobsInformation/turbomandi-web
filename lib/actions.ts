@@ -1,13 +1,14 @@
 // @ts-nocheck
 'use server';
 
-import { prisma, checkDatabaseConnection } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 
 export async function getNeonData() {
-  const dbCheck = await checkDatabaseConnection();
-  if (!dbCheck.connected) {
-    return { dbConfigured: false, message: dbCheck.message, vehicles: [], orders: [], bookings: [], parts: [] };
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+  } catch (err) {
+    return { dbConfigured: false, message: 'Database connection failed. Check your DATABASE_URL.', vehicles: [], orders: [], bookings: [], parts: [] };
   }
 
   try {
