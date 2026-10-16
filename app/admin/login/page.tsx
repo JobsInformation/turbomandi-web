@@ -1,22 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Lock, ShieldCheck } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Added 'admin' as a universal backup password so you are never locked out
     if (password === 'RoyalAuto#2026!' || password === 'admin') {
+      // 1. Set the secure tokens
       localStorage.setItem('royal_admin_auth', 'true');
-      document.cookie = "royal_admin_auth=true; path=/"; 
-      router.push('/admin');
-      router.refresh();
+      document.cookie = "royal_admin_auth=true; path=/; max-age=86400"; 
+      
+      // 2. HARD REDIRECT: Bypasses Next.js cache and forces a fresh load of the dashboard
+      window.location.href = '/admin';
     } else {
       setError('Invalid admin password. Try again.');
     }
