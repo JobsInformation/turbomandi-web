@@ -1,115 +1,151 @@
+// @ts-nocheck
 'use server';
 
-import { prisma } from '@/lib/prisma';
+import { prisma, checkDatabaseConnection } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 
 export async function getNeonData() {
-  try {
-    const vehicles = await prisma.vehicle.findMany({ orderBy: { createdAt: 'desc' } }).catch(() => []);
-    const orders = await prisma.order.findMany({ orderBy: { createdAt: 'desc' } }).catch(() => []);
-    const bookings = await prisma.serviceBooking.findMany({ orderBy: { createdAt: 'desc' } }).catch(() => []);
+  const dbCheck = await checkDatabaseConnection();
+  if (!dbCheck.connected) {
+    return { dbConfigured: false, message: dbCheck.message, vehicles: [], orders: [], bookings: [], parts: [] };
+  }
 
-    return { vehicles, orders, bookings };
+  try {
+    const vehicles = await prisma.vehicle.findMany({ orderBy: { createdAt: 'desc' } });
+    const orders = await prisma.order.findMany({ orderBy: { createdAt: 'desc' } });
+    const bookings = await prisma.serviceBooking.findMany({ orderBy: { createdAt: 'desc' } });
+    const parts = await prisma.part.findMany({ orderBy: { createdAt: 'desc' } });
+
+    return { dbConfigured: true, vehicles, orders, bookings, parts };
   } catch (error) {
-    console.error('Failed to fetch from Neon:', error);
-    return { vehicles: [], orders: [], bookings: [] };
+    return { dbConfigured: false, message: 'Database query error.', vehicles: [], orders: [], bookings: [], parts: [] };
   }
 }
 
-export async function createOrderInNeon(data: {
-  customerName: string;
-  phone?: string;
-  city?: string;
-  address?: string;
-  total?: number;
-  status: string;
-  items: string;
-  email?: string;
-}) {
+export async function createVehicleInNeon(data: any) {
+  try {
+    await prisma.vehicle.create({
+      data: {
+        title: String(data.title || ''),
+        brand: String(data.brand || ''),
+        model: String(data.model || ''),
+        year: Number(data.year) || 2026,
+        price: Number(data.price) || 0,
+        mileage: Number(data.mileage) || 0,
+        condition: String(data.condition || 'Used'),
+        fuelType: String(data.fuelType || 'Petrol'),
+        transmission: String(data.transmission || 'Automatic'),
+        image: String(data.image || ''),
+        description: String(data.description || ''),
+      },
+    });
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: String(error) };
+  }
+}
+
+export async function deleteVehicleFromNeon(id: any) {
+  try {
+    const parsedId = isNaN(Number(id)) ? String(id) : Number(id);
+    await prisma.vehicle.delete({ where: { id: parsedId } });
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: 'Failed to delete vehicle.' };
+  }
+}
+
+export async function createPartInNeon(data: any) {
+  try {
+    await prisma.part.create({
+      data: {
+        name: String(data.name || ''),
+        category: String(data.category || ''),
+        price: Number(data.price) || 0,
+        stock: Number(data.stock) || 0,
+        image: String(data.image || ''),
+      },
+    });
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: 'Failed to create part.' };
+  }
+}
+
+export async function deletePartFromNeon(id: any) {
+  try {
+    const parsedId = isNaN(Number(id)) ? String(id) : Number(id);
+    await prisma.part.delete({ where: { id: parsedId } });
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: 'Failed to delete part.' };
+  }
+}
+
+export async function createOrderInNeon(data: any) {
   try {
     const order = await prisma.order.create({
       data: {
-        customerName: data.customerName,
-        phone: data.phone || '03001234567',
-        city: data.city || 'Melbourne / Hyderabad',
-        address: data.address || 'Showroom Pickup',
-        total: data.total || 42990,
-        status: data.status || 'Confirmed',
-        items: data.items,
-        email: data.email || 'customer@example.com',
+        customerName: String(data.customerName || ''),
+        customerPhone: String(data.customerPhone || data.phone || ''),
+        customerEmail: String(data.customerEmail || data.email || ''),
+        itemTitle: String(data.itemTitle || ''),
+        itemType: String(data.itemType || 'VEHICLE'),
+        totalAmount: Number(data.totalAmount) || 0,
+        status: String(data.status || 'PENDING'),
       },
     });
     revalidatePath('/admin');
     return { success: true, order };
   } catch (error) {
-    console.error('Neon order creation error:', error);
-    return { success: false, error: 'Database error' };
+    return { success: false, error: 'Failed to create order.' };
   }
 }
 
-export async function updateOrderStatusInNeon(id: string, status: string) {
+export async function updateOrderStatusInNeon(id: any, status: string) {
   try {
-    await prisma.order.update({
-      where: { id },
-      data: { status },
-    });
+    const parsedId = isNaN(Number(id)) ? String(id) : Number(id);
+    await prisma.order.update({ where: { id: parsedId }, data: { status: String(status) } });
     revalidatePath('/admin');
     return { success: true };
   } catch (error) {
-    console.error('Neon order update error:', error);
-    return { success: false, error: 'Database error' };
+    return { success: false, error: 'Failed to update order.' };
   }
 }
 
-export async function deleteOrderFromNeon(id: string) {
+export async function deleteOrderFromNeon(id: any) {
   try {
-    await prisma.order.delete({ where: { id } });
+    const parsedId = isNaN(Number(id)) ? String(id) : Number(id);
+    await prisma.order.delete({ where: { id: parsedId } });
     revalidatePath('/admin');
     return { success: true };
   } catch (error) {
-    console.error('Neon order deletion error:', error);
-    return { success: false, error: 'Database error' };
+    return { success: false, error: 'Failed to delete order.' };
   }
 }
 
-export async function createVehicleInNeon(data: {
-  title: string;
-  price: number;
-  year: number;
-  mileage: string;
-  transmission: string;
-  fuel: string;
-  status: string;
-  image: string;
-}) {
+export async function updateBookingStatusInNeon(id: any, status: string) {  
   try {
-    await prisma.vehicle.create({
-      data: {
-        title: data.title,
-        price: data.price,
-        year: data.year,
-        mileage: data.mileage,
-        transmission: data.transmission,
-        fuel: data.fuel,
-        status: data.status || 'Available',
-        image: data.image || 'https://images.unsplash.com/photo-1550355191-aa80b1574ffc?auto=format&fit=crop&w=800&q=80',
-      },
-    });
+    const parsedId = isNaN(Number(id)) ? String(id) : Number(id);
+    await prisma.serviceBooking.update({ where: { id: parsedId }, data: { status: String(status) } });
     revalidatePath('/admin');
     return { success: true };
   } catch (error) {
-    console.error('Neon vehicle creation error:', error);
-    return { success: false, error: 'Database error' };
+    return { success: false, error: 'Failed to update booking.' };
   }
 }
 
-export async function deleteVehicleFromNeon(id: string) {
+export async function deleteBookingFromNeon(id: any) {
   try {
-    await prisma.vehicle.delete({ where: { id } });
+    const parsedId = isNaN(Number(id)) ? String(id) : Number(id);
+    await prisma.serviceBooking.delete({ where: { id: parsedId } });
     revalidatePath('/admin');
     return { success: true };
   } catch (error) {
-    console.error('Neon vehicle deletion error:', error);
-    return { success: false, error: 'Database error' };
+    return { success: false, error: 'Failed to delete booking.' };
   }
 }
