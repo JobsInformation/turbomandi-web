@@ -1,54 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Car, ShoppingCart, Calendar, Wrench, LogOut } from 'lucide-react';
+import { Car, ShoppingCart, Calendar, Wrench } from 'lucide-react';
 
 export default function AdminPage() {
-  const router = useRouter();
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Check for our secure local storage token
-    const auth = localStorage.getItem('royal_admin_auth');
-    
-    if (auth === 'true') {
-      setIsAuthorized(true);
-    } else {
-      router.push('/admin/login');
-    }
-    setIsLoading(false);
-  }, [router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('royal_admin_auth');
-    document.cookie = "royal_admin_auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    router.push('/admin/login');
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (!isAuthorized) return null;
-
+  // 🚨 SECURITY TEMPORARILY BYPASSED FOR TESTING 🚨
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Top Navigation Bar */}
       <div className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm">
-         <h1 className="text-xl font-bold text-slate-800">Royal Auto Hub Admin</h1>
-         <button 
-           onClick={handleLogout}
-           className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
-         >
-           <LogOut className="w-4 h-4" /> Logout
-         </button>
+         <h1 className="text-xl font-bold text-slate-800">Royal Auto Hub Admin (Unlocked)</h1>
       </div>
 
       {/* Main Dashboard Grid */}
