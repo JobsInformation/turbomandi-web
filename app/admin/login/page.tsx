@@ -11,7 +11,7 @@ export default function AdminLoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'admin123' || password === 'royalauto2026') {
+    if (password === 'RoyalAuto#2026!') {
       localStorage.setItem('royal_admin_auth', 'true');
       router.push('/admin');
     } else {
@@ -20,40 +20,40 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-8 shadow-xl">
         <div className="flex justify-center mb-6">
-          <div className="p-3 bg-red-600/10 border border-red-500/20 rounded-xl text-red-500">
+          <div className="p-3 bg-blue-600/10 border border-blue-500/20 rounded-xl text-blue-600">
             <ShieldCheck className="w-8 h-8" />
           </div>
         </div>
         <h1 className="text-2xl font-bold text-center mb-2">Admin Portal Login</h1>
-        <p className="text-slate-400 text-center text-sm mb-6">Royal Auto Hub Management</p>
+        <p className="text-slate-500 text-center text-sm mb-6">Royal Auto Hub Management - VIC LMCT</p>
         
         {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg text-center">
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-600 text-sm rounded-lg text-center">
             {error}
           </div>
         )}
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Admin Password</label>
+            <label className="block text-xs font-medium text-slate-500 mb-1">Admin Password</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
+              <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
               <input 
                 type="password" 
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
                 placeholder="Enter password"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 required
               />
             </div>
           </div>
           <button 
             type="submit" 
-            className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-colors shadow-lg shadow-red-600/20"
+            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors shadow-lg shadow-blue-600/20"
           >
             Access Portal
           </button>
