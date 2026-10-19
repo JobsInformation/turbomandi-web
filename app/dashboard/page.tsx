@@ -112,33 +112,33 @@ export default function UnifiedDashboard() {
         <h2 className="text-2xl font-semibold mb-6 text-slate-800">Dashboard Overview</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Link href="/admin/inventory" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center gap-4 group">
+            <a href="/admin/inventory" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center gap-4 group">
                 <div className="p-4 bg-blue-50 text-blue-600 rounded-full group-hover:scale-110 transition-transform">
                     <Car className="w-8 h-8" />
                 </div>
                 <span className="font-semibold text-slate-700">Vehicle Inventory</span>
-            </Link>
+            </a>
 
-            <Link href="/admin/orders" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center gap-4 group">
+            <a href="/admin/orders" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center gap-4 group">
                 <div className="p-4 bg-green-50 text-green-600 rounded-full group-hover:scale-110 transition-transform">
                     <ShoppingCart className="w-8 h-8" />
                 </div>
                 <span className="font-semibold text-slate-700">Customer Orders</span>
-            </Link>
+            </a>
 
-            <Link href="/admin/bookings" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center gap-4 group">
+            <a href="/admin/bookings" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center gap-4 group">
                 <div className="p-4 bg-purple-50 text-purple-600 rounded-full group-hover:scale-110 transition-transform">
                     <Calendar className="w-8 h-8" />
                 </div>
                 <span className="font-semibold text-slate-700">Service Bookings</span>
-            </Link>
+            </a>
 
-            <Link href="/parts" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center gap-4 group">
+            <a href="/parts" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center gap-4 group">
                 <div className="p-4 bg-orange-50 text-orange-600 rounded-full group-hover:scale-110 transition-transform">
                     <Wrench className="w-8 h-8" />
                 </div>
                 <span className="font-semibold text-slate-700">Parts Directory</span>
-            </Link>
+            </a>
         </div>
       </div>
     </div>
