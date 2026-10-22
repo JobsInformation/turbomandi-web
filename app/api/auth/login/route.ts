@@ -4,18 +4,17 @@ import { cookies } from 'next/headers';
 export async function POST(request: Request) {
   try {
     const { password } = await request.json();
-    
-    // Checks your Vercel Environment Variables securely!
     const validPassword = process.env.ADMIN_PASSWORD || 'RoyalAuto#2026!';
     
     if (password === validPassword) {
-      // Create a tamper-proof, HTTP-only cookie
-      cookies().set('royal_admin_session', 'authenticated', {
+      // Await the cookies object before setting it (Next.js 15 requirement)
+      const cookieStore = await cookies();
+      cookieStore.set('royal_admin_session', 'authenticated', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         path: '/',
-        maxAge: 60 * 60 * 24 // 24 hours
+        maxAge: 60 * 60 * 24
       });
       return NextResponse.json({ success: true });
     }
