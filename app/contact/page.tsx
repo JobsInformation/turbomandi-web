@@ -13,7 +13,7 @@ export default function ContactPage() {
     
     const formData = new FormData(e.currentTarget);
     // Remember to replace this string with your actual Web3Forms Access Key!
-    formData.append("access_key", "YOUR_WEB3FORMS_KEY_HERE"); 
+    formData.append("access_key", "c10f9dc7-0d2e-4603-b9ca-4410edccf688"); 
     formData.append("subject", "New General Enquiry from Royal Auto Hub Website");
     formData.append("from_name", "Royal Auto Hub Website");
 
