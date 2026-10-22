@@ -1,277 +1,124 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import Link from 'next/link';
-import { Search, SlidersHorizontal, ShieldCheck, Car, ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Heart, Leaf, Filter, X } from 'lucide-react';
 
-interface VehicleItem {
-  id: string;
-  title: string;
-  price: number;
-  year: number;
-  mileage: string;
-  transmission: string;
-  fuel: string;
-  category: string;
-  image: string;
-}
-
-const ALL_VEHICLES: VehicleItem[] = [
-  {
-    id: 'camry-2023',
-    title: 'Toyota Camry Ascent',
-    price: 32990,
-    year: 2023,
-    mileage: '45,000 km',
-    transmission: 'Automatic',
-    fuel: 'Hybrid',
-    category: 'Sedan',
-    image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'mazda-cx5-2022',
-    title: 'Mazda CX-5 Maxx Sport',
-    price: 28500,
-    year: 2022,
-    mileage: '62,000 km',
-    transmission: 'Automatic',
-    fuel: 'Petrol',
-    category: 'SUV',
-    image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'ford-ranger-2021',
-    title: 'Ford Ranger Wildtrak 4x4',
-    price: 54900,
-    year: 2021,
-    mileage: '78,000 km',
-    transmission: 'Automatic',
-    fuel: 'Diesel',
-    category: 'Ute',
-    image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'hyundai-tucson-2023',
-    title: 'Hyundai Tucson Elite',
-    price: 39500,
-    year: 2023,
-    mileage: '28,000 km',
-    transmission: 'Automatic',
-    fuel: 'Petrol',
-    category: 'SUV',
-    image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'toyota-rav4-2024',
-    title: 'Toyota RAV4 Cruiser Hybrid',
-    price: 48990,
-    year: 2024,
-    mileage: '12,500 km',
-    transmission: 'Automatic',
-    fuel: 'Hybrid',
-    category: 'SUV',
-    image: 'https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&w=800&q=80'
-  }
+// Sample verified stock data matching the specification requirements
+const sampleStock = [
+  { id: 1, year: 2022, make: 'Toyota', model: 'RAV4', variant: 'Cruiser', price: 45990, body: 'SUV', fuel: 'Hybrid', odometer: 24000, trans: 'Auto', status: 'Just Arrived' },
+  { id: 2, make: 'Ford', model: 'Ranger', variant: 'Wildtrak', price: 58500, body: 'Ute', fuel: 'Diesel', odometer: 41000, trans: 'Auto', status: 'Popular' },
+  { id: 3, year: 2023, make: 'Toyota', model: 'Camry', variant: 'Ascent', price: 34990, body: 'Sedan', fuel: 'Hybrid', odometer: 12000, trans: 'Auto', status: 'Under Offer' },
 ];
 
-export default function VehiclesPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [maxPrice, setMaxPrice] = useState<string>('all');
-  const [transmission, setTransmission] = useState<string>('all');
-  const [fuelType, setFuelType] = useState<string>('all');
+export default function PublicStockPage() {
+  const [vehicles, setVehicles] = useState(sampleStock);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [savedVehicles, setSavedVehicles] = useState<number[]>([]);
 
-  // Real-time filtering as user types or changes dropdowns
-  const filteredVehicles = useMemo(() => {
-    return ALL_VEHICLES.filter(v => {
-      const matchesSearch = v.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            v.fuel.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            v.category.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      let matchesPrice = true;
-      if (maxPrice === '30000') matchesPrice = v.price <= 30000;
-      else if (maxPrice === '40000') matchesPrice = v.price <= 40000;
-      else if (maxPrice === '50000') matchesPrice = v.price <= 50000;
-      else if (maxPrice === '60000') matchesPrice = v.price <= 60000;
+  // Search Filter Logic
+  const filteredVehicles = vehicles.filter(v => 
+    v.make.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    v.model.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-      const matchesTransmission = transmission === 'all' || v.transmission.toLowerCase() === transmission.toLowerCase();
-      const matchesFuel = fuelType === 'all' || v.fuel.toLowerCase() === fuelType.toLowerCase();
-
-      return matchesSearch && matchesPrice && matchesTransmission && matchesFuel;
-    });
-  }, [searchQuery, maxPrice, transmission, fuelType]);
-
-  const handleReset = () => {
-    setSearchQuery('');
-    setMaxPrice('all');
-    setTransmission('all');
-    setFuelType('all');
+  const toggleSave = (id: number) => {
+    setSavedVehicles(prev => prev.includes(id) ? prev.filter(vId => vId !== id) : [...prev, id]);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 pb-20">
-      
-      {/* Header Banner */}
-      <div className="bg-white border-b border-gray-200 py-10 px-4 sm:px-6 lg:px-8 shadow-sm">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 border border-blue-100">
-              <ShieldCheck className="w-4 h-4 text-blue-600" />
-              VIC LMCT Certified Dealer #123456
-            </span>
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-              Certified Pre-Owned Showroom Stock
-            </h1>
-            <p className="text-gray-500 text-sm mt-1">
-              Every vehicle undergoes a rigorous 120-point safety inspection with clear title guarantee.
-            </p>
-          </div>
-          <div className="bg-blue-600 text-white px-5 py-3 rounded-2xl text-xs font-bold shadow-md">
-            {filteredVehicles.length} Vehicles Available
-          </div>
-        </div>
+    <div className="min-h-screen bg-white font-sans">
+      {/* Hero Banner - Royal Blue Branding */}
+      <div className="bg-blue-700 text-white py-16 px-6 text-center">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4">Built on Trust. Focused on You.</h1>
+        <p className="text-blue-100 text-lg max-w-2xl mx-auto">Explore our premium selection of Victorian used vehicles. Fair deals and transparency guaranteed.</p>
       </div>
 
-      {/* Main Content Layout */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-4 gap-8">
         
-        {/* Interactive Filter Sidebar */}
+        {/* Search & Filters */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm space-y-6 sticky top-28">
-            <div className="flex justify-between items-center border-b border-gray-100 pb-4">
-              <h3 className="font-extrabold text-sm text-gray-900 flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4 text-blue-600" /> Filter Vehicles
-              </h3>
-              <button
-                onClick={handleReset}
-                className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
-              >
-                Reset All
+          <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
+            <div className="flex items-center gap-2 mb-4 text-blue-700 font-bold">
+              <Filter className="w-5 h-5" />
+              <h3>Search Stock</h3>
+            </div>
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+              <input 
+                type="text" 
+                placeholder="Make, model or keyword..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-700 outline-none"
+              />
+            </div>
+            {searchTerm && (
+              <button onClick={() => setSearchTerm('')} className="flex items-center gap-1 text-sm text-red-600 hover:text-red-800">
+                <X className="w-4 h-4" /> Clear Filters
               </button>
-            </div>
-
-            {/* Search Input */}
-            <div className="space-y-2">
-              <label className="block text-xs font-bold text-gray-700 uppercase">Search Make / Model</label>
-              <div className="relative">
-                <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="e.g. Toyota, SUV, Hybrid..."
-                  className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-medium outline-none focus:ring-2 focus:ring-blue-600 text-gray-900"
-                />
-              </div>
-            </div>
-
-            {/* Max Price Filter */}
-            <div className="space-y-2">
-              <label className="block text-xs font-bold text-gray-700 uppercase">Max Price ($ AUD)</label>
-              <select
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-medium outline-none focus:ring-2 focus:ring-blue-600 text-gray-900 cursor-pointer"
-              >
-                <option value="all">Any Price</option>
-                <option value="30000">Under $30,000</option>
-                <option value="40000">Under $40,000</option>
-                <option value="50000">Under $50,000</option>
-                <option value="60000">Under $60,000</option>
-              </select>
-            </div>
-
-            {/* Transmission Filter */}
-            <div className="space-y-2">
-              <label className="block text-xs font-bold text-gray-700 uppercase">Transmission</label>
-              <select
-                value={transmission}
-                onChange={(e) => setTransmission(e.target.value)}
-                className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-medium outline-none focus:ring-2 focus:ring-blue-600 text-gray-900 cursor-pointer"
-              >
-                <option value="all">All Transmissions</option>
-                <option value="Automatic">Automatic</option>
-                <option value="Manual">Manual</option>
-              </select>
-            </div>
-
-            {/* Fuel Type Filter */}
-            <div className="space-y-2">
-              <label className="block text-xs font-bold text-gray-700 uppercase">Fuel Type</label>
-              <select
-                value={fuelType}
-                onChange={(e) => setFuelType(e.target.value)}
-                className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-medium outline-none focus:ring-2 focus:ring-blue-600 text-gray-900 cursor-pointer"
-              >
-                <option value="all">All Fuel Types</option>
-                <option value="Hybrid">Hybrid</option>
-                <option value="Petrol">Petrol</option>
-                <option value="Diesel">Diesel</option>
-              </select>
-            </div>
-
+            )}
           </div>
         </div>
 
-        {/* Vehicle Grid Results */}
-        <div className="lg:col-span-3 space-y-6">
-          {filteredVehicles.length === 0 ? (
-            <div className="bg-white p-12 rounded-3xl border border-gray-200 text-center space-y-4 shadow-sm">
-              <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto">
-                <Car className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">No Vehicles Match Your Filters</h3>
-              <p className="text-sm text-gray-500 max-w-md mx-auto">
-                Try adjusting your search terms or expanding your price range to view available stock.
-              </p>
-              <button
-                onClick={handleReset}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl text-xs font-bold transition-all shadow-md cursor-pointer"
-              >
-                Clear All Filters
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {filteredVehicles.map((vehicle) => (
-                <div key={vehicle.id} className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-lg transition-shadow">
-                  <div className="relative h-56 bg-gray-100 overflow-hidden">
-                    <img src={vehicle.image} alt={vehicle.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <span className="absolute top-4 left-4 bg-blue-600 text-white px-3.5 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider shadow-md">
-                      VIC Certified
-                    </span>
+        {/* Vehicle Grid */}
+        <div className="lg:col-span-3">
+          <div className="mb-6 flex justify-between items-center text-slate-600">
+            <span className="font-semibold text-slate-800">{filteredVehicles.length} vehicles matching your search</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredVehicles.map(vehicle => (
+              <div key={vehicle.id} className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow overflow-hidden flex flex-col">
+                
+                {/* Vehicle Image Placeholder & Badges */}
+                <div className="h-48 bg-slate-100 relative p-4 flex items-start justify-between">
+                   <span className="bg-blue-700 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                     {vehicle.status}
+                   </span>
+                   <button onClick={() => toggleSave(vehicle.id)} className="p-2 bg-white rounded-full shadow-sm hover:scale-110 transition-transform">
+                     <Heart className={`w-5 h-5 ${savedVehicles.includes(vehicle.id) ? 'fill-red-500 text-red-500' : 'text-slate-400'}`} />
+                   </button>
+                </div>
+
+                {/* Vehicle Details */}
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="flex justify-between items-start mb-2">
+                    <h2 className="text-xl font-bold text-slate-800">{vehicle.year} {vehicle.make} {vehicle.model}</h2>
+                  </div>
+                  <p className="text-sm text-slate-500 mb-4">{vehicle.variant} • {vehicle.body}</p>
+                  
+                  <div className="grid grid-cols-2 gap-y-2 text-sm text-slate-600 mb-6">
+                    <div className="flex items-center gap-1"><span>{vehicle.odometer.toLocaleString()} km</span></div>
+                    <div className="flex items-center gap-1"><span>{vehicle.trans}</span></div>
+                    
+                    {/* Hybrid Indicator */}
+                    <div className="flex items-center gap-1 font-medium">
+                      {vehicle.fuel === 'Hybrid' ? (
+                        <span className="flex items-center gap-1 text-green-700 bg-green-50 px-2 py-0.5 rounded-md border border-green-200">
+                          <Leaf className="w-3 h-3" /> Hybrid
+                        </span>
+                      ) : (
+                        <span>{vehicle.fuel}</span>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
-                    <div className="space-y-1">
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs font-bold text-blue-600 uppercase tracking-wide">{vehicle.year} Model • {vehicle.category}</span>
-                        <span className="text-xs font-semibold text-gray-400">{vehicle.fuel}</span>
-                      </div>
-                      <h4 className="text-lg font-extrabold text-gray-900 leading-snug">{vehicle.title}</h4>
-                      <p className="text-xs text-gray-500 font-medium">{vehicle.mileage} • {vehicle.transmission}</p>
+                  {/* Pricing & Action */}
+                  <div className="mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+                    <div>
+                      <div className="text-2xl font-bold text-blue-700">${vehicle.price.toLocaleString()}</div>
+                      <div className="text-xs text-slate-400 mt-1">Excl. Govt Charges</div>
                     </div>
-
-                    <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-                      <div>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase">Drive Away Price</p>
-                        <p className="text-xl font-extrabold text-gray-900">${vehicle.price.toLocaleString()}</p>
-                      </div>
-                      <Link
-                        href={`/vehicles/${vehicle.id}`}
-                        className="bg-gray-900 hover:bg-blue-600 text-white px-5 py-3 rounded-2xl text-xs font-bold transition-colors flex items-center gap-2 no-underline"
-                      >
-                        View Details <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
+                    <button className="bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                      Explore
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </div>
-
       </div>
-
     </div>
   );
 }
