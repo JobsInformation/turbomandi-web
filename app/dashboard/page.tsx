@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Lock, ShieldCheck, Car, ShoppingCart, Calendar, Wrench, LogOut } from 'lucide-react';
+import { Lock, ShieldCheck, Car, Users, FileText, Settings, LogOut } from 'lucide-react';
 
 export default function UnifiedDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -9,7 +9,6 @@ export default function UnifiedDashboard() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Still checking LocalStorage as a UI hint, but real security is now on the server
   useEffect(() => {
     if (localStorage.getItem('royal_admin_auth') === 'true') {
       setIsAuthenticated(true);
@@ -41,7 +40,6 @@ export default function UnifiedDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem('royal_admin_auth');
-    // In a full implementation, you'd also call a logout API to destroy the cookie
     setIsAuthenticated(false);
     setPassword('');
   };
@@ -73,26 +71,26 @@ export default function UnifiedDashboard() {
     <div className="min-h-screen bg-slate-50">
       <div className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm">
          <h1 className="text-xl font-bold text-slate-800">Royal Auto Hub Admin</h1>
-         <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium"><LogOut className="w-4 h-4" /> Lock Portal</button>
+         <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"><LogOut className="w-4 h-4" /> Lock Portal</button>
       </div>
       <div className="p-8 max-w-6xl mx-auto">
-        <h2 className="text-2xl font-semibold mb-6 text-slate-800">Dashboard Overview</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-slate-800">Dealership Management</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <a href="/admin/inventory" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md flex flex-col items-center gap-4 group">
+            <a href="/dashboard/inventory" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-200 flex flex-col items-center gap-4 group transition-all">
                 <div className="p-4 bg-blue-50 text-blue-600 rounded-full group-hover:scale-110 transition-transform"><Car className="w-8 h-8" /></div>
                 <span className="font-semibold text-slate-700">Vehicle Inventory</span>
             </a>
-            <a href="/admin/orders" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md flex flex-col items-center gap-4 group">
-                <div className="p-4 bg-green-50 text-green-600 rounded-full group-hover:scale-110 transition-transform"><ShoppingCart className="w-8 h-8" /></div>
-                <span className="font-semibold text-slate-700">Customer Orders</span>
+            <a href="/dashboard/leads" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-green-200 flex flex-col items-center gap-4 group transition-all">
+                <div className="p-4 bg-green-50 text-green-600 rounded-full group-hover:scale-110 transition-transform"><Users className="w-8 h-8" /></div>
+                <span className="font-semibold text-slate-700">Customer Leads</span>
             </a>
-            <a href="/admin/bookings" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md flex flex-col items-center gap-4 group">
-                <div className="p-4 bg-purple-50 text-purple-600 rounded-full group-hover:scale-110 transition-transform"><Calendar className="w-8 h-8" /></div>
-                <span className="font-semibold text-slate-700">Service Bookings</span>
+            <a href="/dashboard/finance" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-purple-200 flex flex-col items-center gap-4 group transition-all">
+                <div className="p-4 bg-purple-50 text-purple-600 rounded-full group-hover:scale-110 transition-transform"><FileText className="w-8 h-8" /></div>
+                <span className="font-semibold text-slate-700">Finance Apps</span>
             </a>
-            <a href="/parts" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md flex flex-col items-center gap-4 group">
-                <div className="p-4 bg-orange-50 text-orange-600 rounded-full group-hover:scale-110 transition-transform"><Wrench className="w-8 h-8" /></div>
-                <span className="font-semibold text-slate-700">Parts Directory</span>
+            <a href="/dashboard/settings" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 flex flex-col items-center gap-4 group transition-all">
+                <div className="p-4 bg-slate-100 text-slate-600 rounded-full group-hover:scale-110 transition-transform"><Settings className="w-8 h-8" /></div>
+                <span className="font-semibold text-slate-700">Settings</span>
             </a>
         </div>
       </div>
