@@ -1,10 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function GET() {
   try {
     const vehicles = await prisma.vehicle.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: 'desc' }
     });
     return NextResponse.json(vehicles);
   } catch (error) {
@@ -12,22 +14,24 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const vehicle = await prisma.vehicle.create({
+    const { name, price, odometer, status, body: bodyType, fuel, trans } = body;
+    
+    const newVehicle = await prisma.vehicle.create({
       data: {
-        make: body.make,
-        model: body.model,
-        year: Number(body.year),
-        price: Number(body.price),
-        mileage: String(body.mileage || '0'),
-        transmission: body.transmission || 'Automatic',
-        type: body.type || 'Car',
-        tag: body.tag || 'USED',
-      },
+        name,
+        price: Number(price),
+        odometer: odometer || '10,000 km',
+        status: status || 'Available',
+        body: bodyType || 'SUV',
+        fuel: fuel || 'Petrol',
+        trans: trans || 'Auto'
+      }
     });
-    return NextResponse.json(vehicle, { status: 201 });
+
+    return NextResponse.json(newVehicle, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create vehicle' }, { status: 500 });
   }

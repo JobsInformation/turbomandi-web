@@ -34,5 +34,13 @@
   },
   "prisma": {
     "seed": "node prisma/seed.js"
+  },
+  "allowScripts": {
+    "@prisma/engines@5.22.0": true,
+    "bcrypt@6.0.0": true,
+    "esbuild@0.28.2": true,
+    "prisma@5.22.0": true,
+    "unrs-resolver@1.12.2": true,
+    "@prisma/client@5.22.0": true
   }
 }
