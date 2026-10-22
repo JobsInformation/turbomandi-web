@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation';
 import { ArrowLeft, Leaf, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
-// Using the same sample data to match the public stock page
 const sampleStock = [
   { id: 1, year: 2022, make: 'Toyota', model: 'RAV4', variant: 'Cruiser', price: 45990, body: 'SUV', fuel: 'Hybrid', odometer: 24000, trans: 'Auto', status: 'Just Arrived' },
   { id: 2, make: 'Ford', model: 'Ranger', variant: 'Wildtrak', price: 58500, body: 'Ute', fuel: 'Diesel', odometer: 41000, trans: 'Auto', status: 'Popular' },
@@ -15,19 +14,42 @@ const sampleStock = [
 export default function VehicleDetailPage() {
   const params = useParams();
   const vehicleId = Number(params.id);
-  const vehicle = sampleStock.find(v => v.id === vehicleId) || sampleStock[0]; // Fallback for preview
+  const vehicle = sampleStock.find(v => v.id === vehicleId) || sampleStock[0];
   
   const [formType, setFormType] = useState('enquiry');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitted(true); // Shows the spec-required "successful preview message"
+    setIsSubmitting(true);
+    
+    const formData = new FormData(e.currentTarget);
+    // Replace this string with your actual Web3Forms Access Key
+    formData.append("access_key", "YOUR_WEB3FORMS_KEY_HERE"); 
+    formData.append("subject", `New ${formType === 'enquiry' ? 'Enquiry' : 'Test Drive'} for ${vehicle.year} ${vehicle.make} ${vehicle.model}`);
+    formData.append("from_name", "Royal Auto Hub Website");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      });
+      
+      if (response.ok) {
+        setIsSubmitted(true);
+      } else {
+        alert("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      alert("Connection error. Please check your internet.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-16">
-      {/* Navigation Bar */}
       <div className="bg-white border-b border-slate-200 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center gap-4">
           <Link href="/vehicles" className="text-blue-700 hover:bg-blue-50 p-2 rounded-lg transition-colors">
@@ -40,8 +62,6 @@ export default function VehicleDetailPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* Left Column: Vehicle Details & Images */}
         <div className="lg:col-span-2 space-y-6">
           <div className="h-96 bg-slate-200 rounded-xl border border-slate-300 flex items-center justify-center text-slate-400">
             [Vehicle Image Gallery Placeholder]
@@ -72,7 +92,6 @@ export default function VehicleDetailPage() {
           </div>
         </div>
 
-        {/* Right Column: Pricing & Forms */}
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
             <div className="text-3xl font-bold text-blue-700 mb-1">${vehicle.price.toLocaleString()}</div>
@@ -86,26 +105,29 @@ export default function VehicleDetailPage() {
             {isSubmitted ? (
               <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-center">
                 <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-600" />
-                <p className="font-semibold">Message Preview Successful!</p>
-                <p className="text-sm mt-1">This form is ready to be connected to the dealership CRM.</p>
+                <p className="font-semibold">Message Sent!</p>
+                <p className="text-sm mt-1">Our sales team will contact you shortly.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <input type="text" placeholder="Full Name" required className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-700 outline-none" />
-                <input type="email" placeholder="Email Address" required className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-700 outline-none" />
-                <input type="tel" placeholder="Phone Number" required className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-700 outline-none" />
+                <input type="text" name="name" placeholder="Full Name" required className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-700 outline-none" />
+                <input type="email" name="email" placeholder="Email Address" required className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-700 outline-none" />
+                <input type="tel" name="phone" placeholder="Phone Number" required className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-700 outline-none" />
                 {formType === 'testdrive' && (
-                  <input type="date" required className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-700 outline-none" />
+                  <input type="date" name="preferred_date" required className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-700 outline-none" />
                 )}
-                <textarea placeholder="How can we help you?" rows={3} className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-700 outline-none"></textarea>
-                <button type="submit" className="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-lg font-bold transition-colors">
-                  {formType === 'enquiry' ? 'Send Enquiry' : 'Request Test Drive'}
+                <textarea name="message" placeholder="How can we help you?" rows={3} className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-700 outline-none"></textarea>
+                
+                {/* Honeypot Spam Protection */}
+                <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
+
+                <button type="submit" disabled={isSubmitting} className="w-full bg-blue-700 hover:bg-blue-800 disabled:bg-blue-400 text-white py-3 rounded-lg font-bold transition-colors">
+                  {isSubmitting ? 'Sending...' : formType === 'enquiry' ? 'Send Enquiry' : 'Request Test Drive'}
                 </button>
               </form>
             )}
           </div>
         </div>
-
       </div>
     </div>
   );
