@@ -23,28 +23,32 @@ model Part {
   id          String   @id @default(uuid())
   name        String
   partNumber  String   @unique
+  sku         String?  @unique
   price       Float
   stock       Int      @default(0)
   createdAt   DateTime @default(now())
 }
 
 model ServiceBooking {
-  id          String   @id @default(uuid())
-  name        String
-  email       String
-  phone       String
-  serviceType String
-  date        String
-  status      String   @default("Pending")
-  createdAt   DateTime @default(now())
+  id           String   @id @default(uuid())
+  name         String
+  customerName String?
+  email        String
+  phone        String
+  serviceType  String
+  date         String
+  status       String   @default("Pending")
+  createdAt    DateTime @default(now())
 }
 
 model Order {
-  id          String   @id @default(uuid())
+  id           String   @id @default(uuid())
   customerName String
-  total       Float
-  status      String   @default("Completed")
-  createdAt   DateTime @default(now())
+  email        String?
+  phone        String?
+  total        Float
+  status       String   @default("Completed")
+  createdAt    DateTime @default(now())
 }
 
 model Lead {
