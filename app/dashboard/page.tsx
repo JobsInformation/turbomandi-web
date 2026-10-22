@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Lock, ShieldCheck, Car, Users, FileText, Settings, LogOut } from 'lucide-react';
+import { Lock, ShieldCheck, Car, Users, FileText, Settings, LogOut, Layers } from 'lucide-react';
 
 export default function UnifiedDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -75,7 +75,11 @@ export default function UnifiedDashboard() {
       </div>
       <div className="p-8 max-w-6xl mx-auto">
         <h2 className="text-2xl font-semibold mb-6 text-slate-800">Dealership Management</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <a href="/dashboard/stock" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-200 flex flex-col items-center gap-4 group transition-all">
+                <div className="p-4 bg-sky-50 text-sky-600 rounded-full group-hover:scale-110 transition-transform"><Layers className="w-8 h-8" /></div>
+                <span className="font-semibold text-slate-700">Stock Catalog</span>
+            </a>
             <a href="/dashboard/inventory" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-200 flex flex-col items-center gap-4 group transition-all">
                 <div className="p-4 bg-blue-50 text-blue-600 rounded-full group-hover:scale-110 transition-transform"><Car className="w-8 h-8" /></div>
                 <span className="font-semibold text-slate-700">Vehicle Inventory</span>
