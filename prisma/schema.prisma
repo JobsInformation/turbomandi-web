@@ -76,3 +76,10 @@ model FinanceApp {
   status           String   @default("Pending")
   createdAt        DateTime @default(now())
 }
+
+model Admin {
+  id       String   @id @default(uuid())
+  email    String   @unique
+  password String
+  name     String?
+}

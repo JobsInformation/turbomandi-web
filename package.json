@@ -5,7 +5,8 @@
   "scripts": {
     "build": "npx prisma generate && next build",
     "dev": "next dev",
-    "start": "next start"
+    "start": "next start",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@types/bcrypt": "^6.0.0",
