@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { id } = await context.params;
     const part = await prisma.part.findUnique({
-      where: { id: Number(id) },
+      where: { id: id },
     });
 
     if (!part) {
@@ -33,7 +33,7 @@ export async function DELETE(
   try {
     const { id } = await context.params;
     await prisma.part.delete({
-      where: { id: Number(id) },
+      where: { id: id },
     });
     return NextResponse.json({ success: true });
   } catch (error: any) {
@@ -56,7 +56,7 @@ export async function PATCH(
     const { name, sku, category, price, stock } = body;
 
     const updated = await prisma.part.update({
-      where: { id: Number(id) },
+      where: { id: id },
       data: {
         ...(name !== undefined && { name }),
         ...(sku !== undefined && { sku }),

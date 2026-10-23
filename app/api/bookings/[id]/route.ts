@@ -8,7 +8,7 @@ export async function DELETE(
   try {
     const { id } = await context.params;
     await prisma.serviceBooking.delete({
-      where: { id: Number(id) },
+      where: { id: id },
     });
     return NextResponse.json({ success: true, message: 'Booking deleted' });
   } catch (error) {

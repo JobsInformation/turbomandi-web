@@ -8,7 +8,7 @@ export async function GET(
   try {
     const { id } = await context.params;
     const booking = await prisma.serviceBooking.findUnique({
-      where: { id: Number(id) },
+      where: { id: id },
     });
 
     if (!booking) {

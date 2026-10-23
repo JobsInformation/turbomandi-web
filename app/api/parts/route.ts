@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     if (search) {
       whereClause.OR = [
         { name: { contains: search, mode: 'insensitive' } },
-        { category: { contains: search, mode: 'insensitive' } },
+        { partNumber: `PN-${Date.now()}`, category: { contains: search, mode: 'insensitive' } },
         { sku: { contains: search, mode: 'insensitive' } }
       ];
     }
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { name, sku, category, price, stock } = body;
+    const { name, sku, category, partNumber: `PN-${Date.now()}`, price, stock } = body;
 
     if (!name || price === undefined || price === null) {
       return NextResponse.json(
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         sku: sku || null,
-        category: category || 'General',
+        partNumber: `PN-${Date.now()}`, category: category || 'General',
         price: Number(price),
         stock: stock !== undefined && stock !== null ? Number(stock) : 10,
       },

@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { id } = await context.params;
     const vehicle = await prisma.vehicle.findUnique({
-      where: { id: Number(id) },
+      where: { id: id },
     });
 
     if (!vehicle) {
@@ -33,7 +33,7 @@ export async function DELETE(
   try {
     const { id } = await context.params;
     await prisma.vehicle.delete({
-      where: { id: Number(id) },
+      where: { id: id },
     });
     return NextResponse.json({ success: true });
   } catch (error: any) {
