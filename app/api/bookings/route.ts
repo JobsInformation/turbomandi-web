@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    const { customerName, phone, vehicleInfo, serviceType, date, date, notes } = data;
+    const { customerName, phone, vehicleInfo, serviceType, date} = data;
 
     if (!customerName || !phone) {
       return NextResponse.json(
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
         vehicleInfo: vehicleInfo || 'Vehicle',
         serviceType: serviceType || 'General Maintenance',
         date: date || date || 'Soonest Available',
-        notes: notes || null,
+        // notes: notes || null,
         status: 'CONFIRMED',
       },
     });
