@@ -42,14 +42,14 @@ export async function POST(request: Request) {
 
     const newOrder = await prisma.$transaction(async (tx) => {
       for (const item of items) {
-        const numericId = Number(item.id);
+        const numericId = String(item.id);
         if (!isNaN(numericId)) {
           const part = await tx.part.findUnique({
             where: { id: numericId },
           });
 
           if (part) {
-            const qty = Number(item.quantity) || 1;
+            const qty = String(item.quantity) || 1;
             if (part.stock < qty) {
               throw new Error(`Insufficient stock for "${part.name}". Available: ${part.stock}`);
             }
