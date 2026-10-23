@@ -32,7 +32,7 @@ export async function POST(req: Request) {
         vehicleInfo: vehicleInfo || 'Vehicle',
         serviceType: serviceType || 'General Maintenance',
         date: date || date || 'Soonest Available',
-        // notes: notes || null,
+        // // notes: notes || null,
         status: 'CONFIRMED',
       },
     });
