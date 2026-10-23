@@ -24,6 +24,7 @@ model Part {
   name        String
   partNumber  String   @unique
   sku         String?  @unique
+  category    String?  @default("General")
   price       Float
   stock       Int      @default(0)
   createdAt   DateTime @default(now())
@@ -36,6 +37,7 @@ model ServiceBooking {
   email        String
   phone        String
   serviceType  String
+  vehicleInfo  String?
   date         String
   status       String   @default("Pending")
   createdAt    DateTime @default(now())
@@ -46,6 +48,9 @@ model Order {
   customerName String
   email        String?
   phone        String?
+  address      String?
+  city         String?
+  items        String?  // Stored as JSON string for invoice items
   total        Float
   status       String   @default("Completed")
   createdAt    DateTime @default(now())
