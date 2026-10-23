@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { customerName, phone, vehicleInfo, serviceType, date, date, notes } = body;
+    const { customerName, phone, vehicleInfo, serviceType, date, notes } = body;
 
     if (!customerName || !phone) {
       return NextResponse.json(
