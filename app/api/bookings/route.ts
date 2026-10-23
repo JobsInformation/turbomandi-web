@@ -27,6 +27,8 @@ export async function POST(req: Request) {
 
     const newBooking = await prisma.serviceBooking.create({
       data: {
+        name: customerName || "Guest",
+        email: "guest@example.com",
         customerName,
         phone,
         vehicleInfo: vehicleInfo || 'Vehicle',
