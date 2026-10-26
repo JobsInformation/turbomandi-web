@@ -7,18 +7,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Vehicle {
-  id        String   @id @default(uuid())
-  name      String
-  price     Float
-  odometer  String
-  status    String   @default("Available")
-  body      String   @default("SUV")
-  fuel      String   @default("Petrol")
-  trans     String   @default("Auto")
-  createdAt DateTime @default(now())
-}
-
 model Part {
   id          String   @id @default(uuid())
   name        String
@@ -82,4 +70,14 @@ model Admin {
   email    String   @unique
   password String
   name     String?
+}
+model Vehicle {
+  id        String   @id @default(cuid())
+  make      String
+  model     String
+  year      Int
+  price     Float
+  status    String   @default("Available")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
