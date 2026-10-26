@@ -37,8 +37,18 @@ export default function InventoryPage() {
     if (res.ok) fetchVehicles();
   };
 
+  const handleStatusUpdate = async (id: string, currentStatus: string) => {
+    const newStatus = currentStatus === "Available" ? "Sold" : "Available";
+    const res = await fetch("/api/vehicles", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status: newStatus }),
+    });
+    if (res.ok) fetchVehicles();
+  };
+
   return (
-    <div className="max-w-4xl bg-white p-8 rounded-lg shadow-md">
+    <div className="max-w-5xl bg-white p-8 rounded-lg shadow-md">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Inventory Management</h1>
       
       <form onSubmit={handleSubmit} className="flex gap-4 text-black mb-8">
@@ -63,12 +73,19 @@ export default function InventoryPage() {
         </thead>
         <tbody>
           {vehicles.map((v: any) => (
-            <tr key={v.id} className="border-b">
+            <tr key={v.id} className="border-b hover:bg-gray-50">
               <td className="p-3 font-medium">{v.make} {v.model}</td>
               <td className="p-3">{v.year}</td>
               <td className="p-3">${v.price}</td>
-              <td className="p-3"><span className="bg-green-100 text-green-800 text-sm px-2 py-1 rounded-full">{v.status}</span></td>
               <td className="p-3">
+                <span className={`text-sm px-2 py-1 rounded-full ${v.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-800'}`}>
+                  {v.status}
+                </span>
+              </td>
+              <td className="p-3 flex gap-3">
+                <button onClick={() => handleStatusUpdate(v.id, v.status)} className="text-blue-600 font-medium hover:underline">
+                  Mark {v.status === "Available" ? "Sold" : "Available"}
+                </button>
                 <button onClick={() => handleDelete(v.id)} className="text-red-600 font-medium hover:underline">Delete</button>
               </td>
             </tr>

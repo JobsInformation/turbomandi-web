@@ -42,3 +42,19 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Failed to delete vehicle" }, { status: 500 });
   }
 }
+
+export async function PATCH(req: Request) {
+  try {
+    const body = await req.json();
+    const { id, status } = body;
+    if (!id || !status) return NextResponse.json({ error: "Missing data" }, { status: 400 });
+
+    const vehicle = await prisma.vehicle.update({
+      where: { id },
+      data: { status },
+    });
+    return NextResponse.json(vehicle);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to update status" }, { status: 500 });
+  }
+}
