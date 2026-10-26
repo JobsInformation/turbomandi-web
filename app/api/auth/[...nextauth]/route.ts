@@ -32,7 +32,7 @@ const handler = NextAuth({
   session: { strategy: "jwt" },
   pages: { signIn: "/admin/login" },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: true,
+  debug: false,
 });
 
 export { handler as GET, handler as POST };

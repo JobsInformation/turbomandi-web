@@ -1,33 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+
+const SIGN_IN_TIMEOUT_MS = 20000;
 
 export default function AdminLogin() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    let redirecting = false;
 
-    if (res?.error) {
-      setError("Invalid credentials. Please try again.");
-      setLoading(false);
-    } else {
-      router.push("/admin");
-      router.refresh();
+    try {
+      // If the server never answers, give up after 20 seconds instead of spinning forever
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("timeout")), SIGN_IN_TIMEOUT_MS)
+      );
+
+      const res = await Promise.race([
+        signIn("credentials", {
+          email: email.trim(),
+          password,
+          redirect: false,
+          callbackUrl: "/admin",
+        }),
+        timeout,
+      ]);
+
+      if (!res || res.error) {
+        setError("Invalid email or password.");
+        return;
+      }
+
+      // Full page load: picks up the new session cookie and can't leave the button stuck
+      redirecting = true;
+      window.location.assign("/admin");
+    } catch {
+      setError("The server did not respond. Please try again.");
+    } finally {
+      if (!redirecting) setLoading(false);
     }
   };
 
@@ -44,7 +62,7 @@ export default function AdminLogin() {
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm text-center">
+            <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm text-center" role="alert">
               {error}
             </div>
           )}
@@ -55,6 +73,7 @@ export default function AdminLogin() {
                 id="email-address"
                 name="email"
                 type="email"
+                autoComplete="email"
                 required
                 className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Email address"
@@ -68,6 +87,7 @@ export default function AdminLogin() {
                 id="password"
                 name="password"
                 type="password"
+                autoComplete="current-password"
                 required
                 className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Password"
