@@ -1,171 +1,75 @@
-import Link from 'next/link';
-import { Car, ShieldCheck, ArrowRight, Search, FileText, Calculator, Award } from 'lucide-react';
+import { PrismaClient } from "@prisma/client";
 
-export default function HomePage() {
+const prisma = new PrismaClient();
+
+// Force dynamic rendering so the homepage updates instantly when inventory changes
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function HomePage() {
+  // Fetch only available vehicles directly from the database
+  const availableVehicles = await prisma.vehicle.findMany({
+    where: { status: "Available" },
+    orderBy: { createdAt: "desc" },
+  });
+
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      
-      {/* Hero Banner (Royal Blue per specification) */}
-      <section 
-        className="text-white py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden shadow-md"
-        style={{ backgroundColor: '#1e3a8a' }}
-      >
-        <div className="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
-          
-          <div className="max-w-2xl text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 bg-blue-800/80 text-blue-200 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-6 border border-blue-600/50 shadow-sm">
-              <ShieldCheck className="w-4 h-4 text-blue-300" />
-              VIC Licensed Motor Car Trader (LMCT)
-            </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight mb-6 text-white">
-              Built on Trust. <span className="text-blue-200 block mt-2">Focused on You.</span>
-            </h1>
-            <p className="text-lg sm:text-xl text-blue-100 mb-8 leading-relaxed font-normal">
-              Explore certified Victorian used vehicles, transparent pricing, guaranteed quality, and seamless financing tailored to your needs.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <Link
-                href="/inventory"
-                className="w-full sm:w-auto bg-white text-blue-900 hover:bg-blue-50 font-bold px-8 py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-base no-underline"
-              >
-                Browse Vehicles
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link
-                href="/sell-car"
-                className="w-full sm:w-auto bg-blue-700 hover:bg-blue-600 text-white font-semibold px-8 py-4 rounded-xl border border-blue-500 transition-all flex items-center justify-center gap-2 text-base shadow-md no-underline"
-              >
-                Value My Car
-              </Link>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
+      <header className="bg-blue-900 text-white p-6 shadow-md">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <h1 className="text-3xl font-bold tracking-tight">Royal Auto Hub</h1>
+          <nav className="hidden md:flex space-x-6 font-medium items-center">
+            <a href="#" className="hover:text-blue-200">Home</a>
+            <a href="#" className="hover:text-blue-200">Vehicles & Stock</a>
+            <a href="/admin/inventory" className="text-sm bg-blue-700 px-4 py-2 rounded-lg hover:bg-blue-600 transition shadow">
+              Admin Portal
+            </a>
+          </nav>
+        </div>
+      </header>
 
-          {/* Hero Quick Search Box */}
-          <div className="w-full max-w-md bg-white text-gray-900 p-6 sm:p-8 rounded-2xl shadow-2xl border border-gray-100">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Search className="w-5 h-5 text-blue-600" />
-              Find Your Next Vehicle
-            </h3>
-            <form action="/inventory" method="GET" className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 uppercase mb-1.5">Make / Keyword</label>
-                <input
-                  type="text"
-                  name="search"
-                  placeholder="e.g. Toyota, Mazda, SUV"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm outline-none text-gray-900 bg-gray-50"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 uppercase mb-1.5">Maximum Price ($ AUD)</label>
-                <select
-                  name="maxPrice"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm outline-none bg-white text-gray-900"
-                >
-                  <option value="">Any Budget</option>
-                  <option value="20000">Under $20,000</option>
-                  <option value="35000">Under $35,000</option>
-                  <option value="50000">Under $50,000</option>
-                  <option value="75000">Under $75,000</option>
-                </select>
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-md text-sm cursor-pointer"
-              >
-                Search Stock Inventory
-              </button>
-            </form>
-          </div>
-
+      <section className="bg-white py-16 text-center shadow-sm border-b">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-4xl font-extrabold mb-4 text-gray-900">Find Your Dream Car Today</h2>
+          <p className="text-xl text-gray-600">Browse our latest premium inventory. Built on Trust. Focused on You.</p>
         </div>
       </section>
 
-      {/* Trust & Value Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-white">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-4">
-            The Royal Auto Hub Standard
-          </h2>
-          <p className="text-base text-gray-600">
-            We deliver complete transparency, rigorous vehicle inspection standards, and a customer-first purchasing experience.
+      <main className="max-w-6xl mx-auto p-8 my-8">
+        <h3 className="text-2xl font-bold mb-8 border-b pb-4">Available Showroom Stock</h3>
+        
+        {availableVehicles.length === 0 ? (
+          <p className="text-center text-gray-500 text-lg py-12 bg-white rounded-lg border border-dashed">
+            No vehicles currently available. Check back soon!
           </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white p-8 rounded-2xl border border-blue-100 shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Victorian LMCT Certified</h3>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Fully licensed dealer complying with all Victorian consumer protection and statutory vehicle standards.
-            </p>
-          </div>
-
-          <div className="bg-white p-8 rounded-2xl border border-blue-100 shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6">
-              <Award className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Inspected Quality</h3>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Every vehicle undergoes rigorous mechanical inspection and history verification before being listed for sale.
-            </p>
-          </div>
-
-          <div className="bg-white p-8 rounded-2xl border border-blue-100 shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6">
-              <Car className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Transparent Pricing</h3>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Clear advertised pricing with upfront details regarding government charges and transfer requirements[cite: 1, 2].
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Action CTA Section */}
-      <section className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
-            <div>
-              <div className="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center mb-4">
-                <Calculator className="w-5 h-5" />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {availableVehicles.map((vehicle) => (
+              <div key={vehicle.id} className="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="h-56 bg-gray-100 flex items-center justify-center text-gray-400 border-b">
+                  <svg className="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <div className="p-6">
+                  <h4 className="text-xl font-bold mb-2 text-gray-900">{vehicle.make} {vehicle.model}</h4>
+                  <div className="flex justify-between items-center mb-4 text-gray-600">
+                    <span>Model Year: <span className="font-semibold text-gray-900">{vehicle.year}</span></span>
+                  </div>
+                  <div className="flex justify-between items-center border-t pt-4 mt-2">
+                    <span className="text-2xl font-extrabold text-blue-700">${vehicle.price.toLocaleString()}</span>
+                    <span className="bg-green-100 text-green-800 text-xs px-3 py-1.5 rounded-full font-bold uppercase tracking-wider">
+                      In Stock
+                    </span>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Flexible Finance Options</h3>
-              <p className="text-gray-600 text-sm mb-6">
-                Estimate your borrowing power and request a finance callback tailored to your personal or business requirements[cite: 1, 2].
-              </p>
-            </div>
-            <Link
-              href="/finance"
-              className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 text-sm no-underline"
-            >
-              Explore Finance Calculator <ArrowRight className="w-4 h-4" />
-            </Link>
+            ))}
           </div>
-
-          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
-            <div>
-              <div className="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center mb-4">
-                <FileText className="w-5 h-5" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Sell or Trade-In Your Car</h3>
-              <p className="text-gray-600 text-sm mb-6">
-                Submit your vehicle details for an indicative valuation and fast appraisal from our acquisitions team[cite: 1, 2].
-              </p>
-            </div>
-            <Link
-              href="/sell-car"
-              className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 text-sm no-underline"
-            >
-              Request Trade-In Valuation <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
+        )}
+      </main>
+      
+      <footer className="bg-gray-900 text-gray-400 text-center p-8 mt-12">
+        <p>&copy; 2026 Royal Auto Hub. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
