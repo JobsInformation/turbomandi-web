@@ -20,3 +20,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Failed to add vehicle" }, { status: 500 });
   }
 }
+
+export async function GET() {
+  try {
+    const vehicles = await prisma.vehicle.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    return NextResponse.json(vehicles);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch vehicles" }, { status: 500 });
+  }
+}
