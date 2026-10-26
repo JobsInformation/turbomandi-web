@@ -1,73 +1,58 @@
-import { PrismaClient } from "@prisma/client";
-import Link from "next/link";
+"use client";
 
-const prisma = new PrismaClient();
+import { useState } from "react";
 
-export default async function InventoryPage() {
-  let inventory = [];
-  
-  try {
-    // Cast to any temporarily to prevent build errors if the Vehicle model is missing or named differently
-    inventory = await (prisma as any).vehicle.findMany({
-      orderBy: { createdAt: "desc" },
+export default function InventoryPage() {
+  const [formData, setFormData] = useState({ make: "", model: "", year: "", price: "" });
+  const [status, setStatus] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("Saving...");
+    
+    const res = await fetch("/api/vehicles", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
     });
-  } catch (error) {
-    console.log("No vehicles found or model missing. Rendering empty state.");
-  }
+
+    if (res.ok) {
+      setStatus("Vehicle added successfully!");
+      setFormData({ make: "", model: "", year: "", price: "" });
+    } else {
+      setStatus("Error saving vehicle.");
+    }
+  };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Vehicle Inventory</h1>
-        <Link 
-          href="/admin/inventory/new" 
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-        >
-          + Add Vehicle
-        </Link>
-      </div>
-      
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Make & Model</th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {inventory.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-gray-500">
-                  No vehicles found in the database. Add your first vehicle to get started.
-                </td>
-              </tr>
-            ) : (
-              inventory.map((item: any) => (
-                <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                    {item.year} {item.make} {item.model}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                    ${item.price?.toLocaleString() || "0"}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                      {item.status || "Available"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
-                    <button className="text-blue-600 hover:text-blue-900">Edit</button>
-                    <button className="text-red-600 hover:text-red-900">Delete</button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+    <div className="max-w-2xl bg-white p-8 rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Add New Vehicle</h1>
+      <form onSubmit={handleSubmit} className="space-y-4 text-black">
+        <input 
+          type="text" placeholder="Make (e.g. Toyota)" required
+          className="w-full p-3 border rounded-lg"
+          value={formData.make} onChange={e => setFormData({...formData, make: e.target.value})}
+        />
+        <input 
+          type="text" placeholder="Model (e.g. Camry)" required
+          className="w-full p-3 border rounded-lg"
+          value={formData.model} onChange={e => setFormData({...formData, model: e.target.value})}
+        />
+        <input 
+          type="number" placeholder="Year (e.g. 2024)" required
+          className="w-full p-3 border rounded-lg"
+          value={formData.year} onChange={e => setFormData({...formData, year: e.target.value})}
+        />
+        <input 
+          type="number" placeholder="Price" required
+          className="w-full p-3 border rounded-lg"
+          value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})}
+        />
+        <button type="submit" className="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700">
+          Save Vehicle
+        </button>
+      </form>
+      {status && <p className="mt-4 text-center font-medium text-blue-600">{status}</p>}
     </div>
   );
 }
