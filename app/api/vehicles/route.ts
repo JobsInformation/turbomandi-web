@@ -23,11 +23,22 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    const vehicles = await prisma.vehicle.findMany({
-      orderBy: { createdAt: "desc" },
-    });
+    const vehicles = await prisma.vehicle.findMany({ orderBy: { createdAt: "desc" } });
     return NextResponse.json(vehicles);
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch vehicles" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (!id) return NextResponse.json({ error: "Missing ID" }, { status: 400 });
+    
+    await prisma.vehicle.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to delete vehicle" }, { status: 500 });
   }
 }

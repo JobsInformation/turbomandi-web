@@ -9,33 +9,32 @@ export default function InventoryPage() {
 
   const fetchVehicles = async () => {
     const res = await fetch("/api/vehicles");
-    if (res.ok) {
-      const data = await res.json();
-      setVehicles(data);
-    }
+    if (res.ok) setVehicles(await res.json());
   };
 
-  useEffect(() => {
-    fetchVehicles();
-  }, []);
+  useEffect(() => { fetchVehicles(); }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("Saving...");
-    
     const res = await fetch("/api/vehicles", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
-
     if (res.ok) {
       setStatus("Vehicle added successfully!");
       setFormData({ make: "", model: "", year: "", price: "" });
-      fetchVehicles(); // Refresh the list instantly
+      fetchVehicles();
     } else {
       setStatus("Error saving vehicle.");
     }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this vehicle?")) return;
+    const res = await fetch(`/api/vehicles?id=${id}`, { method: "DELETE" });
+    if (res.ok) fetchVehicles();
   };
 
   return (
@@ -58,7 +57,8 @@ export default function InventoryPage() {
             <th className="p-3 rounded-tl-lg">Make & Model</th>
             <th className="p-3">Year</th>
             <th className="p-3">Price</th>
-            <th className="p-3 rounded-tr-lg">Status</th>
+            <th className="p-3">Status</th>
+            <th className="p-3 rounded-tr-lg">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -67,8 +67,9 @@ export default function InventoryPage() {
               <td className="p-3 font-medium">{v.make} {v.model}</td>
               <td className="p-3">{v.year}</td>
               <td className="p-3">${v.price}</td>
+              <td className="p-3"><span className="bg-green-100 text-green-800 text-sm px-2 py-1 rounded-full">{v.status}</span></td>
               <td className="p-3">
-                <span className="bg-green-100 text-green-800 text-sm px-2 py-1 rounded-full">{v.status}</span>
+                <button onClick={() => handleDelete(v.id)} className="text-red-600 font-medium hover:underline">Delete</button>
               </td>
             </tr>
           ))}
