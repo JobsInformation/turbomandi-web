@@ -80,4 +80,5 @@ model Vehicle {
   status    String   @default("Available")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+	imageUrl  String?
 }

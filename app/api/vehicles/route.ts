@@ -1,22 +1,42 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { put } from "@vercel/blob";
 
 const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    // Switch from JSON to FormData to handle file uploads
+    const formData = await req.formData();
+    
+    const make = formData.get("make") as string;
+    const model = formData.get("model") as string;
+    const year = formData.get("year") as string;
+    const price = formData.get("price") as string;
+    const file = formData.get("image") as File | null;
+
+    let imageUrl = null;
+
+    // If an image was uploaded, send it to Vercel Blob
+    if (file && file.size > 0) {
+      const blob = await put(file.name, file, { access: "public" });
+      imageUrl = blob.url;
+    }
+
     const vehicle = await prisma.vehicle.create({
       data: {
-        make: body.make,
-        model: body.model,
-        year: parseInt(body.year),
-        price: parseFloat(body.price),
+        make,
+        model,
+        year: parseInt(year),
+        price: parseFloat(price),
         status: "Available",
+        imageUrl,
       },
     });
+    
     return NextResponse.json(vehicle, { status: 201 });
   } catch (error) {
+    console.error("Upload error:", error);
     return NextResponse.json({ error: "Failed to add vehicle" }, { status: 500 });
   }
 }
