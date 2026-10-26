@@ -5,7 +5,9 @@ import { ArrowLeft, Plus, Car, X } from 'lucide-react';
 
 interface Vehicle {
   id: number;
-  name: string;
+  make: string;
+  model: string;
+  year: number;
   price: number;
   odometer: string;
   status: string;
@@ -88,7 +90,7 @@ export default function InventoryAdmin() {
                   <tr key={vehicle.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="py-4 px-4 font-medium flex items-center gap-3">
                       <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><Car className="w-5 h-5"/></div>
-                      {vehicle.name}
+                      {vehicle.year} {vehicle.make} {vehicle.model}
                     </td>
                     <td className="py-4 px-4">${vehicle.price.toLocaleString()}</td>
                     <td className="py-4 px-4">{vehicle.odometer}</td>

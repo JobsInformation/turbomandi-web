@@ -81,4 +81,8 @@ model Vehicle {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 	imageUrl  String?
+  body      String?
+  odometer  String?
+  trans     String?
+  fuel      String?
 }

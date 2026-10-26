@@ -5,13 +5,15 @@ import { Car, Leaf, Search } from 'lucide-react';
 
 interface Vehicle {
   id: string;
-  name: string;
+  make: string;
+  model: string;
+  year: number;
   price: number;
-  odometer: string;
+  odometer: string | null;
   status: string;
-  body: string;
-  fuel: string;
-  trans: string;
+  body: string | null;
+  fuel: string | null;
+  trans: string | null;
 }
 
 export default function PublicVehiclesPage() {
@@ -30,7 +32,7 @@ export default function PublicVehiclesPage() {
   }, []);
 
   const filteredVehicles = vehicles.filter(v => 
-    v.name.toLowerCase().includes(searchTerm.toLowerCase())
+    `${v.make} ${v.model} ${v.year}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -71,7 +73,7 @@ export default function PublicVehiclesPage() {
                     <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">{vehicle.body}</span>
                   </div>
                   
-                  <h3 className="text-lg font-bold text-slate-800 mb-1">{vehicle.name}</h3>
+                  <h3 className="text-lg font-bold text-slate-800 mb-1">{vehicle.year} {vehicle.make} {vehicle.model}</h3>
                   <div className="text-2xl font-extrabold text-blue-700 mb-4">${vehicle.price.toLocaleString()}</div>
                   
                   <div className="space-y-2 text-sm text-slate-600 border-t border-slate-100 pt-4 mb-6">
